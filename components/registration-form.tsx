@@ -43,7 +43,12 @@ const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
 export default function RegistrationForm() {
   const [schema, setSchema] = useState<Schema | null>(null);
-  const { data: me, mutate: mutateMe, error: meError, isLoading: loadingMeRaw } = useSWR(() => "/api/participant", fetcher);
+  const {
+    data: me,
+    mutate: mutateMe,
+    error: meError,
+    isLoading: loadingMeRaw,
+  } = useSWR(() => "/api/participant", fetcher);
   const [form, setForm] = useState<Record<string, string>>({});
   const [teamMode, setTeamMode] = useState<"create" | "join">("create");
   const [error, setError] = useState<string | null>(null);
@@ -134,7 +139,7 @@ export default function RegistrationForm() {
 
   async function saveParticipant() {
     if (!sessionEmail) return;
-    
+
     const r1 = await fetch("/api/participant", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -150,11 +155,13 @@ export default function RegistrationForm() {
     return true;
   }
 
-  const { data: teamStatus, mutate: mutateTeam, isLoading: loadingTeamRaw } = useSWR(
-    sessionEmail ? "/api/team/status" : null,
-    fetcher,
-    { refreshInterval: 8000 }
-  );
+  const {
+    data: teamStatus,
+    mutate: mutateTeam,
+    isLoading: loadingTeamRaw,
+  } = useSWR(sessionEmail ? "/api/team/status" : null, fetcher, {
+    refreshInterval: 8000,
+  });
 
   useEffect(() => {
     // Jump to team view if user has a team (this overrides localStorage restoration)
@@ -181,9 +188,14 @@ export default function RegistrationForm() {
       } catch {}
     }
   }, [teamStatus, totalSteps]);
-  const loadingParticipant = (typeof loadingMeRaw === 'boolean' ? loadingMeRaw : (!me && !meError));
-  const loadingTeam = (typeof loadingTeamRaw === 'boolean' ? loadingTeamRaw : (sessionEmail && !teamStatus));
-  const isLeader = !!teamStatus?.team && teamStatus.team.leaderUserId === sessionEmail;
+  const loadingParticipant =
+    typeof loadingMeRaw === "boolean" ? loadingMeRaw : !me && !meError;
+  const loadingTeam =
+    typeof loadingTeamRaw === "boolean"
+      ? loadingTeamRaw
+      : sessionEmail && !teamStatus;
+  const isLeader =
+    !!teamStatus?.team && teamStatus.team.leaderUserId === sessionEmail;
 
   async function submitTeamActions() {
     setError(null);
@@ -207,8 +219,26 @@ export default function RegistrationForm() {
       setTimeout(() => {
         try {
           confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-          setTimeout(() => confetti({ particleCount: 80, angle: 60, spread: 55, origin: { x: 0 } }), 150);
-          setTimeout(() => confetti({ particleCount: 80, angle: 120, spread: 55, origin: { x: 1 } }), 300);
+          setTimeout(
+            () =>
+              confetti({
+                particleCount: 80,
+                angle: 60,
+                spread: 55,
+                origin: { x: 0 },
+              }),
+            150
+          );
+          setTimeout(
+            () =>
+              confetti({
+                particleCount: 80,
+                angle: 120,
+                spread: 55,
+                origin: { x: 1 },
+              }),
+            300
+          );
         } catch {}
       }, 100);
       await mutateTeam();
@@ -232,8 +262,26 @@ export default function RegistrationForm() {
       setTimeout(() => {
         try {
           confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-          setTimeout(() => confetti({ particleCount: 80, angle: 60, spread: 55, origin: { x: 0 } }), 150);
-          setTimeout(() => confetti({ particleCount: 80, angle: 120, spread: 55, origin: { x: 1 } }), 300);
+          setTimeout(
+            () =>
+              confetti({
+                particleCount: 80,
+                angle: 60,
+                spread: 55,
+                origin: { x: 0 },
+              }),
+            150
+          );
+          setTimeout(
+            () =>
+              confetti({
+                particleCount: 80,
+                angle: 120,
+                spread: 55,
+                origin: { x: 1 },
+              }),
+            300
+          );
         } catch {}
       }, 100);
       await mutateTeam();
@@ -283,149 +331,242 @@ export default function RegistrationForm() {
   const fieldStepsEnd = fieldStepsStart + sections.length - 1;
 
   const isTeamStep = currentStep === totalSteps - 1;
-  const isDone = showCongrats && currentStep === totalSteps && (teamStatus.members?.length || 1) >= 6 ;
+  const isDone =
+    showCongrats &&
+    currentStep === totalSteps &&
+    (teamStatus.members?.length || 1) >= 6;
   const teamLocked = isTeamStep && !!teamStatus?.team;
 
   // Persist / restore dismissal of WhatsApp prompt
   useEffect(() => {
     try {
-      if (localStorage.getItem('sih-wa-dismissed') === '1') {
+      if (localStorage.getItem("sih-wa-dismissed") === "1") {
         setShowWhatsAppPrompt(false);
       }
-      if (localStorage.getItem('sih-wa-dismissed-team') === '1') {
+      if (localStorage.getItem("sih-wa-dismissed-team") === "1") {
         setShowWhatsAppTeamPrompt(false);
       }
     } catch {}
   }, []);
 
   return (
-    <div className="w-full max-w-xl mx-auto rounded-2xl border border-slate-200 bg-white/80 p-6 shadow-sm backdrop-blur">
-      <div className="mb-4 flex items-start justify-between gap-4">
+    // <div className="w-full max-w-2xl mx-auto">
+    <div className="glass-effect rounded-3xl shadow-2xl p-8 border border-white/20">
+      <div className="mb-6 flex items-start justify-between gap-4">
         <div>
-          <h2 className="text-lg font-semibold tracking-tight">
+          <h2 className="text-2xl font-bold text-gradient mb-2">
             {schema?.title || "Registration"}
           </h2>
-          {schema?.description ? (
-            <p className="mt-1 text-xs text-slate-600 max-w-sm">
+          {schema?.description && (
+            <p className="text-gray-700 text-sm leading-relaxed max-w-md">
               {schema.description}
             </p>
-          ) : null}
+          )}
         </div>
-        <div className="flex items-center gap-4 text-xs text-slate-600">
+        <div className="flex items-center gap-4 text-sm">
           {sessionEmail && (
             <>
-              <span className="hidden sm:inline">{sessionEmail}</span>
+              <span className="hidden sm:inline text-gray-700 font-medium">
+                {sessionEmail}
+              </span>
               <SignOutButton />
             </>
           )}
           {!sessionEmail && currentStep > 0 && <GoogleSignInButton />}
         </div>
       </div>
-      <div className="mb-6 h-2 w-full overflow-hidden rounded-full bg-slate-100">
-        <div
-          className="h-full bg-gradient-to-r from-blue-500 to-indigo-500 transition-all"
-          style={{ width: `${progressPercent}%` }}
-        />
+
+      {/* Enhanced Progress Bar */}
+      <div className="mb-8 relative">
+        <div className="h-3 w-full overflow-hidden rounded-full bg-gradient-to-r from-gray-100 to-gray-200 shadow-inner">
+          <div
+            className="h-full bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-600 transition-all duration-500 ease-out shadow-lg relative"
+            style={{ width: `${progressPercent}%` }}
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent"></div>
+          </div>
+        </div>
+        <div className="mt-2 flex justify-between text-xs text-gray-600">
+          <span>Step {Math.min(currentStep + 1, totalSteps)}</span>
+          <span>{totalSteps} Total Steps</span>
+        </div>
       </div>
 
-      <form onSubmit={handlePrimary} className="flex flex-col gap-5">
-        {/* Inline feedback messages */}
+      <form onSubmit={handlePrimary} className="space-y-6">
+        {/* Enhanced Feedback Messages */}
         {error && (
-          <div className="animate-in fade-in rounded-md border border-red-300 bg-red-50 px-3 py-2 text-xs text-red-700 flex items-start gap-2">
-            <span className="mt-0.5">⚠️</span>
-            <div className="flex-1">{error}</div>
-            <button
-              type="button"
-              onClick={() => setError(null)}
-              className="text-red-600/70 hover:text-red-700 text-[10px] font-medium"
-            >
-              Dismiss
-            </button>
+          <div className="animate-in fade-in-50 slide-in-from-top-2 rounded-2xl border border-red-200 bg-gradient-to-r from-red-50 to-pink-50 p-4 shadow-sm">
+            <div className="flex items-start gap-3">
+              <div className="w-8 h-8 bg-gradient-to-br from-red-400 to-red-600 rounded-full flex items-center justify-center flex-shrink-0">
+                <svg
+                  className="w-4 h-4 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"
+                  />
+                </svg>
+              </div>
+              <div className="flex-1">
+                <p className="text-red-800 font-medium text-sm">{error}</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setError(null)}
+                className="text-red-500 hover:text-red-700 text-sm font-medium"
+              >
+                ✕
+              </button>
+            </div>
           </div>
         )}
+
         {info && !error && (
-          <div className="animate-in fade-in rounded-md border border-emerald-300 bg-emerald-50 px-3 py-2 text-xs text-emerald-700 flex items-start gap-2">
-            <span className="mt-0.5">✅</span>
-            <div className="flex-1">{info}</div>
-            <button
-              type="button"
-              onClick={() => setInfo(null)}
-              className="text-emerald-600/70 hover:text-emerald-700 text-[10px] font-medium"
-            >
-              Dismiss
-            </button>
+          <div className="animate-in fade-in-50 slide-in-from-top-2 rounded-2xl border border-green-200 bg-gradient-to-r from-green-50 to-emerald-50 p-4 shadow-sm">
+            <div className="flex items-start gap-3">
+              <div className="w-8 h-8 bg-gradient-to-br from-green-400 to-emerald-600 rounded-full flex items-center justify-center flex-shrink-0">
+                <svg
+                  className="w-4 h-4 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              </div>
+              <div className="flex-1">
+                <p className="text-green-800 font-medium text-sm">{info}</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setInfo(null)}
+                className="text-green-500 hover:text-green-700 text-sm font-medium"
+              >
+                ✕
+              </button>
+            </div>
           </div>
         )}
-  {!error && loadingParticipant && currentStep > 0 && (
-          <div
-            className="animate-in fade-in rounded-md border border-slate-200 bg-white/70 px-3 py-2 text-xs text-slate-600 flex items-center gap-2"
-            role="status"
-            aria-live="polite"
-          >
-            <svg
-              className="h-4 w-4 animate-spin text-indigo-600"
-              viewBox="0 0 24 24"
-            >
-              <circle
-                className="opacity-25"
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                strokeWidth="4"
-                fill="none"
-              />
-              <path
-                className="opacity-75"
-                fill="currentColor"
-                d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-              />
-            </svg>
-            Loading your saved data...
+
+        {!error && loadingParticipant && currentStep > 0 && (
+          <div className="animate-in fade-in-50 slide-in-from-top-2 rounded-2xl border border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50 p-4 shadow-sm">
+            <div className="flex items-center gap-3">
+              <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+              <p className="text-blue-800 font-medium text-sm">
+                Loading your saved data...
+              </p>
+            </div>
           </div>
         )}
-        {/* Step content */}
+
+        {/* Step Content */}
         {currentStep === 0 && (
-          <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2">
-            <p className="text-sm text-slate-600">
-              Sign in with Google to begin your registration.
-            </p>
+          <div className="space-y-8 animate-in fade-in-50 slide-in-from-bottom-4">
+            <div className="text-center">
+              <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl">
+                <svg
+                  className="w-10 h-10 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                  />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold text-primary mb-3">
+                Welcome to SIH 2025
+              </h3>
+              <p className="text-gray-700 text-lg max-w-md mx-auto">
+                Sign in with Google to begin your registration journey.
+              </p>
+            </div>
+
             {!sessionEmail && (
               <div className="flex justify-center">
                 <GoogleSignInButton />
               </div>
             )}
+
             {sessionEmail && (
-              <div className="rounded-md border border-green-200 bg-green-50 px-4 py-3 text-xs text-green-700">
-                Signed in as <span className="font-medium">{sessionEmail}</span>
+              <div className="rounded-2xl border border-green-200 bg-gradient-to-r from-green-50 to-emerald-50 p-6 text-center shadow-sm">
+                <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg
+                    className="w-6 h-6 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                </div>
+                <p className="text-green-800 font-medium">Signed in as</p>
+                <p className="text-green-700 font-semibold text-lg">
+                  {sessionEmail}
+                </p>
               </div>
             )}
+
             {!sessionEmail && (
-              <p className="text-xs text-amber-600 text-center">
-                You must sign in to continue.
-              </p>
+              <div className="text-center">
+                <p className="text-amber-600 text-sm font-medium bg-amber-50 px-4 py-2 rounded-xl border border-amber-200">
+                  ⚠️ You must sign in to continue with registration
+                </p>
+              </div>
             )}
           </div>
         )}
 
         {currentStep >= fieldStepsStart && currentStep <= fieldStepsEnd && (
-          <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2">
+          <div className="space-y-8 animate-in fade-in-50 slide-in-from-bottom-4">
             {(() => {
               const section = sections[currentStep - fieldStepsStart];
               if (!section) return null;
               return (
-                <div className="space-y-4">
-                  <div>
-                    <p className="text-sm font-medium text-slate-700 mb-1">
+                <div className="space-y-6">
+                  <div className="text-center">
+                    <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                      <svg
+                        className="w-8 h-8 text-white"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                        />
+                      </svg>
+                    </div>
+                    <h3 className="text-xl font-semibold text-primary mb-2">
                       {section.title}
-                    </p>
+                    </h3>
                     {section.description && (
-                      <p className="text-xs text-slate-500">
-                        {section.description}
-                      </p>
+                      <p className="text-gray-700">{section.description}</p>
                     )}
                   </div>
-                  <div className="grid gap-5">
+                  <div className="grid gap-6">
                     {section.fields.map((f) => (
                       <DynamicField
                         key={f.key}
@@ -442,46 +583,92 @@ export default function RegistrationForm() {
         )}
 
         {isTeamStep && (
-          <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2">
-            <div>
-              <p className="text-sm font-medium text-slate-700 mb-1">
+          <div className="space-y-8 animate-in fade-in-50 slide-in-from-bottom-4">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                <svg
+                  className="w-8 h-8 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                  />
+                </svg>
+              </div>
+              <h3 className="text-xl font-semibold text-primary mb-2">
                 Team Formation
-              </p>
-              <p className="text-xs text-slate-500">
+              </h3>
+              <p className="text-gray-700">
                 Create a new team or join using an invite code. This step is
                 required.
               </p>
             </div>
+
             {loadingTeam && (
-              <div className="rounded-lg border border-dashed p-6 flex flex-col items-center justify-center gap-3 bg-white/60">
-                <svg className="h-6 w-6 animate-spin text-indigo-600" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
-                </svg>
-                <p className="text-xs text-slate-600">Loading team status...</p>
+              <div className="glass-effect rounded-2xl p-8 flex flex-col items-center justify-center gap-4 shadow-lg">
+                <div className="w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+                <p className="text-gray-700 font-medium">
+                  Loading team status...
+                </p>
               </div>
             )}
+
             {!loadingTeam && teamStatus?.team ? (
-              <div className="rounded-lg border p-4 bg-gradient-to-br from-indigo-50 to-blue-50">
-                <div className="flex flex-col gap-2">
+              <div className="glass-effect rounded-3xl p-8 shadow-xl border border-white/20">
+                <div className="space-y-6">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-sm font-semibold text-slate-700">Your Team</h3>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
+                        <svg
+                          className="w-6 h-6 text-white"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                          />
+                        </svg>
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-semibold text-primary">
+                          Your Team
+                        </h3>
+                        <p className="text-secondary font-medium">
+                          {teamStatus.team.name}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
                       {isLeader ? (
                         <>
                           <NotificationBell />
                           <button
                             type="button"
                             onClick={async () => {
-                              if (confirm("Delete this team? This cannot be undone.")) {
-                                await fetch("/api/team/status", { method: "DELETE" });
+                              if (
+                                confirm(
+                                  "Delete this team? This cannot be undone."
+                                )
+                              ) {
+                                await fetch("/api/team/status", {
+                                  method: "DELETE",
+                                });
                                 setTeamMode("create");
                                 setTeamName("");
                                 setInviteCode("");
                                 await mutateTeam();
                               }
                             }}
-                            className="text-[11px] rounded-md border px-2 py-1 cursor-pointer text-white bg-red-500"
+                            className="btn-secondary text-red-600 hover:bg-red-50 border-red-200"
                           >
                             Delete Team
                           </button>
@@ -491,7 +678,9 @@ export default function RegistrationForm() {
                           type="button"
                           onClick={async () => {
                             if (confirm("Exit this team?")) {
-                              const r = await fetch("/api/team/leave", { method: "POST" });
+                              const r = await fetch("/api/team/leave", {
+                                method: "POST",
+                              });
                               if (r.ok) {
                                 setInfo("Exited team");
                                 await mutateTeam();
@@ -500,260 +689,466 @@ export default function RegistrationForm() {
                               }
                             }
                           }}
-                          className="text-[11px] rounded-md border px-2 py-1 cursor-pointer text-white bg-amber-500"
+                          className="btn-secondary text-amber-600 hover:bg-amber-50 border-amber-200"
                         >
                           Exit Team
                         </button>
                       )}
                     </div>
                   </div>
-                  <p className="text-xs text-slate-600">
-                    <span className="font-medium">Name:</span>{" "}
-                    {teamStatus.team.name}
-                  </p>
-                  {/* Only show invite code if team is not full (less than 6 members) */}
+
+                  {/* Invite Code Section */}
                   {(teamStatus.members?.length || 1) < 6 && (
-                    <div className="mt-1 rounded-md border bg-white/70 p-3 flex flex-col gap-2">
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="text-[11px] font-medium text-slate-700">Invite Code</span>
-                        <button type="button" onClick={async ()=>{ try { await navigator.clipboard.writeText(teamStatus.team.inviteCode); setCopied(true); setInfo('Invite code copied'); setTimeout(()=>setCopied(false),1500);} catch { setError('Failed to copy code')} }} className="text-[10px] rounded border px-2 py-0.5 hover:bg-indigo-50 border-indigo-300 text-indigo-600">{copied ? 'Copied' : 'Copy'}</button>
+                    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100">
+                      <div className="flex items-center justify-between mb-3">
+                        <h4 className="text-sm font-semibold text-blue-800">
+                          Invite Code
+                        </h4>
+                        <button
+                          type="button"
+                          onClick={async () => {
+                            try {
+                              await navigator.clipboard.writeText(
+                                teamStatus.team.inviteCode
+                              );
+                              setCopied(true);
+                              setInfo("Invite code copied");
+                              setTimeout(() => setCopied(false), 1500);
+                            } catch {
+                              setError("Failed to copy code");
+                            }
+                          }}
+                          className="btn-secondary text-sm"
+                        >
+                          {copied ? "Copied!" : "Copy Code"}
+                        </button>
                       </div>
-                      <div className="font-mono tracking-wider text-center text-sm text-indigo-700 select-all">{teamStatus.team.inviteCode}</div>
+                      <div className="font-mono text-center text-lg font-bold text-blue-700 bg-white/70 py-3 px-4 rounded-xl select-all">
+                        {teamStatus.team.inviteCode}
+                      </div>
                     </div>
                   )}
-                  {/* Team full message (only when complete) */}
+
+                  {/* Team Complete Section */}
                   {(teamStatus.members?.length || 1) >= 6 && (
-                    <div className="mt-1 rounded-md border border-green-200 bg-green-50 p-3">
-                      <div className="flex items-center gap-2">
-                        <div className="h-2 w-2 rounded-full bg-green-500"></div>
-                        <span className="text-[11px] font-medium text-green-700">Team Complete</span>
+                    <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl p-6 border border-green-200">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center">
+                          <svg
+                            className="w-4 h-4 text-white"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M5 13l4 4L19 7"
+                            />
+                          </svg>
+                        </div>
+                        <div>
+                          <h4 className="font-semibold text-green-800">
+                            Team Complete!
+                          </h4>
+                          <p className="text-green-600 text-sm">
+                            Maximum capacity reached (6/6 members)
+                          </p>
+                        </div>
                       </div>
-                      <p className="text-[10px] text-green-600 mt-1">Your team has reached the maximum capacity of 6 members.</p>
-                      <div className="mt-3 pt-2 border-t border-green-200">
-                        <p className="text-[10px] text-green-700 font-medium mb-2">🚀 Next Step: Choose Your Problem Statement</p>
+                      <div className="border-t border-green-200 pt-4">
+                        <p className="text-green-700 font-medium mb-3">
+                          🚀 Next Step: Choose Your Problem Statement
+                        </p>
                         <a
                           href="https://sih.gov.in/sih2025PS"
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 text-[10px] bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded-md transition-colors"
+                          className="btn-primary inline-flex items-center gap-2"
                         >
-                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                          <svg
+                            className="w-4 h-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                            />
                           </svg>
                           View SIH 2025 Problem Statements
                         </a>
-                        <p className="text-[9px] text-green-600 mt-1">Browse official problem statements for Smart India Hackathon 2025</p>
                       </div>
                     </div>
                   )}
-                  {/* WhatsApp community prompt (always visible when in a team) */}
-                  <div className="mt-4 rounded-md border border-emerald-300 bg-emerald-50 p-3">
-                    <div className="flex items-start gap-3">
-                      <div>
-                        <p className="text-[11px] font-semibold text-emerald-800">Stay Connected</p>
-                        <p className="text-[10px] text-emerald-700 mt-1 leading-relaxed max-w-sm">Join our WhatsApp community for critical updates, resources, and coordination tips as you prepare your submission.</p>
-                      </div>
-                    </div>
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      <a
-                        href="https://chat.whatsapp.com/F9cJqS4W0YiHFi6naaqrok"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 rounded-md bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-medium px-3 py-1.5"
-                      >
-                        <svg className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor">
-                          <path d="M12 2a10 10 0 00-8.94 14.5L2 22l5.7-1.99A10 10 0 1012 2zm0 2a8 8 0 110 16 7.96 7.96 0 01-3.65-.88l-.26-.14-3.38 1.18 1.16-3.3-.17-.28A8 8 0 0112 4zm4.24 9.71c-.24-.12-1.42-.7-1.64-.78-.22-.08-.38-.12-.54.12-.16.24-.62.78-.76.94-.14.16-.28.18-.52.06-.24-.12-1-.37-1.9-1.18-.7-.62-1.18-1.38-1.32-1.62-.14-.24-.02-.36.1-.48.1-.1.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.3-.74-1.78-.2-.48-.4-.42-.54-.42-.14 0-.3 0-.46 0-.16 0-.42.06-.64.3-.22.24-.86.84-.86 2.04 0 1.2.88 2.36 1 2.52.12.16 1.72 2.62 4.16 3.68.58.26 1.04.42 1.4.54.58.18 1.1.16 1.52.1.46-.06 1.42-.58 1.62-1.14.2-.56.2-1.04.14-1.14-.06-.1-.22-.16-.46-.28z" />
-                        </svg>
-                        Join WhatsApp Group
-                      </a>
-                    </div>
-                  </div>
-                  <div className="mt-2">
-                    <p className="text-[11px] font-medium text-slate-600 mb-1">
-                      Members ({teamStatus.members?.length || 1}/6)
+
+                  {/* WhatsApp Community Section */}
+                  <div className="bg-gradient-to-r from-emerald-50 to-green-50 rounded-2xl p-6 border border-emerald-200">
+                    <h4 className="font-semibold text-emerald-800 mb-2">
+                      Stay Connected
+                    </h4>
+                    <p className="text-emerald-700 text-sm mb-4 leading-relaxed">
+                      Join our WhatsApp community for critical updates,
+                      resources, and coordination tips as you prepare your
+                      submission.
                     </p>
-                    <ul className="space-y-1">
-                      {(teamStatus.members || [])
-                        .sort((a: any, b: any) => {
-                          // Sort so leader appears first
-                          const aIsLeader = teamStatus.team.leaderUserId === a.email;
-                          const bIsLeader = teamStatus.team.leaderUserId === b.email;
-                          if (aIsLeader && !bIsLeader) return -1;
-                          if (!aIsLeader && bIsLeader) return 1;
-                          return 0;
-                        })
-                        .map((m: any) => {
-                        const leader = teamStatus.team.leaderUserId === m.email;
-                        return (
-                          <li
-                            key={m.email}
-                            className="text-[11px] flex flex-col sm:flex-row sm:items-center sm:justify-between rounded bg-white/70 px-2 py-2 border gap-1 sm:gap-0"
-                          >
-                            <div className="flex items-center gap-2 min-w-0">
-                              <span className="font-medium truncate max-w-[10rem] sm:max-w-[14rem]">{m.name}</span>
-                              {leader && (
-                                <span className="text-[10px] px-1.5 py-0.5 rounded bg-indigo-600 text-white whitespace-nowrap">Team Lead</span>
-                              )}
-                            </div>
-                            <span className="uppercase text-[10px] text-slate-500 tracking-wide">
-                              {m.gender}
-                            </span>
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            ) : (!loadingTeam && (
-              <div className="space-y-4">
-                  <div className="rounded-lg border border-emerald-300 bg-emerald-50 p-4 space-y-3 animate-in fade-in">
-                    <div>
-                      <p className="text-sm font-semibold text-emerald-800">Join Our WhatsApp Community</p>
-                      <p className="text-[11px] text-emerald-700 mt-1 leading-relaxed">
-                        Stay updated with announcements, resources, and networking opportunities for SIH 2025 participants while you form your team.
-                      </p>
-                    </div>
                     <a
-                      href="https://chat.whatsapp.com/F9cJqS4W0YiHFi6naaqrok"
+                      href="https://chat.whatsapp.com/Hb81DgrYqn8ApptdhZb3sv"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex w-fit items-center gap-2 rounded-md bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-medium px-4 py-2 shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600"
+                      className="btn-primary bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 inline-flex items-center gap-2"
                     >
-                      <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                      <svg
+                        className="w-4 h-4"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                      >
                         <path d="M12 2a10 10 0 00-8.94 14.5L2 22l5.7-1.99A10 10 0 1012 2zm0 2a8 8 0 110 16 7.96 7.96 0 01-3.65-.88l-.26-.14-3.38 1.18 1.16-3.3-.17-.28A8 8 0 0112 4zm4.24 9.71c-.24-.12-1.42-.7-1.64-.78-.22-.08-.38-.12-.54.12-.16.24-.62.78-.76.94-.14.16-.28.18-.52.06-.24-.12-1-.37-1.9-1.18-.7-.62-1.18-1.38-1.32-1.62-.14-.24-.02-.36.1-.48.1-.1.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.3-.74-1.78-.2-.48-.4-.42-.54-.42-.14 0-.3 0-.46 0-.16 0-.42.06-.64.3-.22.24-.86.84-.86 2.04 0 1.2.88 2.36 1 2.52.12.16 1.72 2.62 4.16 3.68.58.26 1.04.42 1.4.54.58.18 1.1.16 1.52.1.46-.06 1.42-.58 1.62-1.14.2-.56.2-1.04.14-1.14-.06-.1-.22-.16-.46-.28z" />
                       </svg>
                       Join WhatsApp Group
                     </a>
                   </div>
-                <div className="grid gap-2 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-                <button
-                  type="button"
-                  onClick={() => setTeamMode("create")}
-                  className={`group relative rounded-xl border p-4 text-left transition hover:shadow ${teamMode === "create" ? "border-blue-600 ring-2 ring-blue-600" : "border-slate-200"}`}
-                >
-                  <div className="mb-2 flex items-center justify-between">
-                    <span className="text-sm font-semibold text-slate-700">
-                      Create Team
-                    </span>
-                    <span className="text-xs text-blue-600">Leader</span>
-                  </div>
-                  <p className="text-[11px] text-slate-500">
-                    Start a new team as leader & share code.
-                  </p>
-                  {teamMode === "create" && (
-                    <div className="mt-3">
-                      <input
-                        className="w-full rounded-md border px-3 py-2 text-sm"
-                        placeholder="Team Name"
-                        value={teamName}
-                        onChange={(e) => setTeamName(e.target.value)}
-                      />
+
+                  {/* Team Members */}
+                  <div>
+                    <h4 className="font-semibold text-primary mb-3">
+                      Team Members ({teamStatus.members?.length || 1}/6)
+                    </h4>
+                    <div className="space-y-3">
+                      {(teamStatus.members || [])
+                        .sort((a: any, b: any) => {
+                          const aIsLeader =
+                            teamStatus.team.leaderUserId === a.email;
+                          const bIsLeader =
+                            teamStatus.team.leaderUserId === b.email;
+                          if (aIsLeader && !bIsLeader) return -1;
+                          if (!aIsLeader && bIsLeader) return 1;
+                          return 0;
+                        })
+                        .map((m: any) => {
+                          const leader =
+                            teamStatus.team.leaderUserId === m.email;
+                          return (
+                            <div
+                              key={m.email}
+                              className="glass-effect rounded-xl p-4 border border-white/20"
+                            >
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                  <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-purple-600 rounded-full flex items-center justify-center">
+                                    <span className="text-white font-semibold">
+                                      {m.name.charAt(0).toUpperCase()}
+                                    </span>
+                                  </div>
+                                  <div>
+                                    <p className="font-medium text-primary">
+                                      {m.name}
+                                    </p>
+                                    <p className="text-gray-600 text-sm">
+                                      {m.gender}
+                                    </p>
+                                  </div>
+                                </div>
+                                {leader && (
+                                  <span className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-xs font-medium px-3 py-1 rounded-full">
+                                    Team Lead
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
                     </div>
-                  )}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setTeamMode("join")}
-                  className={`group relative rounded-xl border p-4 text-left transition hover:shadow ${teamMode === "join" ? "border-blue-600 ring-2 ring-blue-600" : "border-slate-200"}`}
-                >
-                  <div className="mb-2 flex items-center justify-between">
-                    <span className="text-sm font-semibold text-slate-700">
-                      Join Team
-                    </span>
-                    <span className="text-xs text-indigo-600">Member</span>
                   </div>
-                  <p className="text-[11px] text-slate-500">
-                    Use an invite code from a leader.
-                  </p>
-                  {teamMode === "join" && (
-                    <div className="mt-3">
-                      <input
-                        className="w-full rounded-md border px-3 py-2 text-sm uppercase tracking-wider"
-                        placeholder="Invite Code"
-                        value={inviteCode}
-                        onChange={(e) =>
-                          setInviteCode(e.target.value.toUpperCase())
-                        }
-                      />
-                    </div>
-                  )}
-                </button>
-                <a
-                  href="/team-discovery"
-                  className="group relative rounded-xl border border-slate-200 hover:border-slate-300 p-4 text-left transition hover:shadow"
-                >
-                  <div className="mb-2 flex items-center justify-between">
-                    <span className="text-sm font-semibold text-slate-700">
-                      Find Teams
-                    </span>
-                    <span className="text-xs text-indigo-600">Discovery</span>
-                  </div>
-                  <p className="text-[11px] text-slate-500">
-                    Browse available teams & teammates.
-                  </p>
-                  <div className="mt-3 flex items-center gap-1 text-indigo-600">
-                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                    </svg>
-                    <span className="text-[10px] font-medium">Explore →</span>
-                  </div>
-                </a>
                 </div>
               </div>
-            ))}
-            <p className="text-[11px] text-slate-500 leading-relaxed">
-              Teams must have exactly 6 members and include at least 1 female
-              participant.
-            </p>
+            ) : (
+              !loadingTeam && (
+                <div className="space-y-6">
+                  {/* WhatsApp Prompt */}
+                  <div className="glass-effect rounded-2xl p-6 border border-emerald-200 bg-gradient-to-r from-emerald-50/50 to-green-50/50">
+                    <h4 className="font-semibold text-emerald-800 mb-2">
+                      Join Our WhatsApp Community
+                    </h4>
+                    <p className="text-emerald-700 text-sm mb-4 leading-relaxed">
+                      Stay updated with announcements, resources, and networking
+                      opportunities for SIH 2025 participants while you form
+                      your team.
+                    </p>
+                    <a
+                      href="https://chat.whatsapp.com/Hb81DgrYqn8ApptdhZb3sv"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn-primary bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 inline-flex items-center gap-2"
+                    >
+                      <svg
+                        className="w-4 h-4"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                      >
+                        <path d="M12 2a10 10 0 00-8.94 14.5L2 22l5.7-1.99A10 10 0 1012 2zm0 2a8 8 0 110 16 7.96 7.96 0 01-3.65-.88l-.26-.14-3.38 1.18 1.16-3.3-.17-.28A8 8 0 0112 4zm4.24 9.71c-.24-.12-1.42-.7-1.64-.78-.22-.08-.38-.12-.54.12-.16.24-.62.78-.76.94-.14.16-.28.18-.52.06-.24-.12-1-.37-1.9-1.18-.7-.62-1.18-1.38-1.32-1.62-.14-.24-.02-.36.1-.48.1-.1.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.3-.74-1.78-.2-.48-.4-.42-.54-.42-.14 0-.3 0-.46 0-.16 0-.42.06-.64.3-.22.24-.86.84-.86 2.04 0 1.2.88 2.36 1 2.52.12.16 1.72 2.62 4.16 3.68.58.26 1.04.42 1.4.54.58.18 1.1.16 1.52.1.46-.06 1.42-.58 1.62-1.14.2-.56.2-1.04.14-1.14-.06-.1-.22-.16-.46-.28z" />
+                      </svg>
+                      Join WhatsApp Group
+                    </a>
+                  </div>
+
+                  {/* Team Options */}
+                  <div className="grid gap-4 grid-cols-1 lg:grid-cols-3">
+                    <button
+                      type="button"
+                      onClick={() => setTeamMode("create")}
+                      className={`glass-effect rounded-2xl p-6 text-left transition-all duration-300 hover:shadow-xl border ${
+                        teamMode === "create"
+                          ? "border-blue-500 ring-2 ring-blue-500/50 bg-blue-50/50"
+                          : "border-white/20 hover:border-blue-300"
+                      }`}
+                    >
+                      <div className="flex items-center gap-3 mb-3">
+                        <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
+                          <svg
+                            className="w-5 h-5 text-white"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                            />
+                          </svg>
+                        </div>
+                        <div>
+                          <h4 className="font-semibold text-primary">
+                            Create Team
+                          </h4>
+                          <p className="text-blue-600 text-sm">Leader</p>
+                        </div>
+                      </div>
+                      <p className="text-gray-700 text-sm mb-4">
+                        Start a new team as leader & share code with members.
+                      </p>
+                      {teamMode === "create" && (
+                        <input
+                          className="w-full rounded-xl border border-blue-200 px-4 py-3 text-sm bg-white/70 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          placeholder="Enter team name"
+                          value={teamName}
+                          onChange={(e) => setTeamName(e.target.value)}
+                        />
+                      )}
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setTeamMode("join")}
+                      className={`glass-effect rounded-2xl p-6 text-left transition-all duration-300 hover:shadow-xl border ${
+                        teamMode === "join"
+                          ? "border-indigo-500 ring-2 ring-indigo-500/50 bg-indigo-50/50"
+                          : "border-white/20 hover:border-indigo-300"
+                      }`}
+                    >
+                      <div className="flex items-center gap-3 mb-3">
+                        <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center">
+                          <svg
+                            className="w-5 h-5 text-white"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"
+                            />
+                          </svg>
+                        </div>
+                        <div>
+                          <h4 className="font-semibold text-primary">
+                            Join Team
+                          </h4>
+                          <p className="text-indigo-600 text-sm">Member</p>
+                        </div>
+                      </div>
+                      <p className="text-gray-700 text-sm mb-4">
+                        Use an invite code from a team leader.
+                      </p>
+                      {teamMode === "join" && (
+                        <input
+                          className="w-full rounded-xl border border-indigo-200 px-4 py-3 text-sm bg-white/70 focus:outline-none focus:ring-2 focus:ring-indigo-500 uppercase tracking-wider font-mono"
+                          placeholder="INVITE CODE"
+                          value={inviteCode}
+                          onChange={(e) =>
+                            setInviteCode(e.target.value.toUpperCase())
+                          }
+                        />
+                      )}
+                    </button>
+
+                    <a
+                      href="/team-discovery"
+                      className="glass-effect rounded-2xl p-6 text-left transition-all duration-300 hover:shadow-xl border border-white/20 hover:border-purple-300 group"
+                    >
+                      <div className="flex items-center gap-3 mb-3">
+                        <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center">
+                          <svg
+                            className="w-5 h-5 text-white"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                            />
+                          </svg>
+                        </div>
+                        <div>
+                          <h4 className="font-semibold text-primary">
+                            Find Teams
+                          </h4>
+                          <p className="text-purple-600 text-sm">Discovery</p>
+                        </div>
+                      </div>
+                      <p className="text-gray-700 text-sm mb-4">
+                        Browse available teams & teammates.
+                      </p>
+                      <div className="flex items-center gap-2 text-purple-600 group-hover:text-purple-700">
+                        <span className="text-sm font-medium">
+                          Explore Teams
+                        </span>
+                        <svg
+                          className="w-4 h-4 transition-transform group-hover:translate-x-1"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M17 8l4 4m0 0l-4 4m4-4H3"
+                          />
+                        </svg>
+                      </div>
+                    </a>
+                  </div>
+                </div>
+              )
+            )}
+
+            <div className="text-center">
+              <p className="text-amber-800 text-sm leading-relaxed bg-amber-50/70 px-4 py-3 rounded-xl border border-amber-200">
+                ⚠️ Teams must have exactly 6 members and include at least 2
+                female participant.
+              </p>
+            </div>
           </div>
         )}
 
         {isDone && (
-          <div
-            className="animate-in fade-in-50 slide-in-from-bottom-1 rounded-md border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800"
-            role="status"
-            aria-live="polite"
-          >
-            Registration complete. You can revisit to modify details before the
-            deadline.
+          <div className="animate-in fade-in-50 slide-in-from-bottom-2 glass-effect rounded-2xl p-6 border border-green-200 bg-gradient-to-r from-green-50/50 to-emerald-50/50 shadow-lg">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center">
+                <svg
+                  className="w-6 h-6 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-green-800">
+                  Registration Complete! 🎉
+                </h3>
+                <p className="text-green-700">
+                  You can revisit to modify details before the deadline.
+                </p>
+              </div>
+            </div>
           </div>
         )}
 
-        {/* Navigation Buttons (hidden if team already formed) */}
+        {/* Enhanced Navigation Buttons */}
         {!isDone && !teamLocked && (
-          <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center justify-between gap-4 pt-6 border-t border-white/20">
             <button
               type="button"
               onClick={goBack}
               disabled={currentStep === 0 || pending}
-              className="inline-flex items-center rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50 disabled:opacity-40"
+              className="btn-secondary disabled:opacity-40 disabled:cursor-not-allowed"
             >
+              <svg
+                className="w-4 h-4 mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                />
+              </svg>
               Back
             </button>
-            <div className="ml-auto flex items-center gap-4 text-[11px] text-slate-500">
+
+            <div className="flex items-center gap-3 text-sm text-gray-600">
               <span>
-                Step {Math.min(currentStep + 1, totalSteps)} / {totalSteps}
+                Step {Math.min(currentStep + 1, totalSteps)} of {totalSteps}
               </span>
+              <div className="hidden sm:flex items-center gap-1">
+                {Array.from({ length: totalSteps }, (_, i) => (
+                  <div
+                    key={i}
+                    className={`w-2 h-2 rounded-full transition-colors ${
+                      i <= currentStep
+                        ? "bg-gradient-to-r from-blue-500 to-indigo-500"
+                        : "bg-gray-200"
+                    }`}
+                  />
+                ))}
+              </div>
             </div>
-            {sessionEmail != null && <button
-              type="submit"
-              disabled={
-                pending ||
-                (currentStep === 0 && !sessionEmail) ||
-                (isTeamStep && teamMode === "create" && !teamName.trim()) ||
-                (isTeamStep && teamMode === "join" && !inviteCode.trim())
-              }
-              className="inline-flex items-center rounded-md bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-2 text-sm font-semibold text-white shadow hover:from-blue-500 hover:to-indigo-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 disabled:opacity-50"
-            >
-              {currentStep === 0 && !sessionEmail
-                ? null
-                : pending
-                  ? "Saving..."
-                  : currentStep === totalSteps - 1
-                    ? "Finish"
-                    : "Continue"}
-            </button>}
+
+            {sessionEmail != null && (
+              <button
+                type="submit"
+                disabled={
+                  pending ||
+                  (currentStep === 0 && !sessionEmail) ||
+                  (isTeamStep && teamMode === "create" && !teamName.trim()) ||
+                  (isTeamStep && teamMode === "join" && !inviteCode.trim())
+                }
+                className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {currentStep === 0 && !sessionEmail ? null : pending ? (
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    Saving...
+                  </div>
+                ) : currentStep === totalSteps - 1 ? (
+                  "Finish Registration"
+                ) : (
+                  "Continue"
+                )}
+              </button>
+            )}
           </div>
         )}
       </form>

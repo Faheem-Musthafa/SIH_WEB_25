@@ -1,7 +1,7 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 // Connect to MongoDB
-mongoose.connect('mongodb://localhost:27017/sih25', {
+mongoose.connect("mongodb://localhost:27017/sih25", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
@@ -16,7 +16,7 @@ const participantSchema = new mongoose.Schema({
   branch: String,
   year: String,
   createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now }
+  updatedAt: { type: Date, default: Date.now },
 });
 
 const teamSchema = new mongoose.Schema({
@@ -25,62 +25,62 @@ const teamSchema = new mongoose.Schema({
   memberUserIds: [String],
   inviteCode: String,
   createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now }
+  updatedAt: { type: Date, default: Date.now },
 });
 
-const Participant = mongoose.model('Participant', participantSchema);
-const Team = mongoose.model('Team', teamSchema);
+const Participant = mongoose.model("Participant", participantSchema);
+const Team = mongoose.model("Team", teamSchema);
 
 async function addTestMembers() {
   try {
     // Find Tekions team
-    const tekionsTeam = await Team.findOne({ name: 'Tekions' });
+    const tekionsTeam = await Team.findOne({ name: "Tekions" });
     if (!tekionsTeam) {
-      console.log('Tekions team not found');
+      console.log("Tekions team not found");
       return;
     }
 
-    console.log('Current Tekions team:', tekionsTeam);
-    console.log('Current member count:', tekionsTeam.memberUserIds.length);
+    console.log("Current Tekions team:", tekionsTeam);
+    console.log("Current member count:", tekionsTeam.memberUserIds.length);
 
     // Test members to add (mix of male and female)
     const testMembers = [
       {
-        email: 'test1@example.com',
-        name: 'Test Member 1',
-        phone: '+91-9876543210',
-        gender: 'Male',
-        college: 'Test College',
-        branch: 'Computer Science',
-        year: '3rd Year'
+        email: "test1@example.com",
+        name: "Test Member 1",
+        phone: "+91-9876543210",
+        gender: "Male",
+        college: "Test College",
+        branch: "Computer Science",
+        year: "3rd Year",
       },
       {
-        email: 'test2@example.com',
-        name: 'Test Member 2',
-        phone: '+91-9876543211',
-        gender: 'Male',
-        college: 'Test College',
-        branch: 'Information Technology',
-        year: '2nd Year'
+        email: "test2@example.com",
+        name: "Test Member 2",
+        phone: "+91-9876543211",
+        gender: "Male",
+        college: "Test College",
+        branch: "Information Technology",
+        year: "2nd Year",
       },
       {
-        email: 'test3@example.com',
-        name: 'Test Member 3',
-        phone: '+91-9876543212',
-        gender: 'Male',
-        college: 'Test College',
-        branch: 'Electronics',
-        year: '4th Year'
+        email: "test3@example.com",
+        name: "Test Member 3",
+        phone: "+91-9876543212",
+        gender: "Male",
+        college: "Test College",
+        branch: "Electronics",
+        year: "4th Year",
       },
       {
-        email: 'test4@example.com',
-        name: 'Test Member 4',
-        phone: '+91-9876543213',
-        gender: 'Female',
-        college: 'Test College',
-        branch: 'Mechanical',
-        year: '3rd Year'
-      }
+        email: "test4@example.com",
+        name: "Test Member 4",
+        phone: "+91-9876543213",
+        gender: "Female",
+        college: "Test College",
+        branch: "Mechanical",
+        year: "3rd Year",
+      },
     ];
 
     // Calculate how many members we need to add (max 6 total)
@@ -88,7 +88,7 @@ async function addTestMembers() {
     const membersToAdd = Math.min(testMembers.length, 6 - currentCount);
 
     if (membersToAdd <= 0) {
-      console.log('Tekions team is already full or has enough members');
+      console.log("Tekions team is already full or has enough members");
       return;
     }
 
@@ -97,9 +97,11 @@ async function addTestMembers() {
     // Add participants to database
     for (let i = 0; i < membersToAdd; i++) {
       const member = testMembers[i];
-      
+
       // Check if participant already exists
-      const existingParticipant = await Participant.findOne({ email: member.email });
+      const existingParticipant = await Participant.findOne({
+        email: member.email,
+      });
       if (!existingParticipant) {
         await Participant.create(member);
         console.log(`Created participant: ${member.name} (${member.email})`);
@@ -116,20 +118,19 @@ async function addTestMembers() {
     // Update team
     await Team.updateOne(
       { _id: tekionsTeam._id },
-      { 
-        $set: { 
+      {
+        $set: {
           memberUserIds: tekionsTeam.memberUserIds,
-          updatedAt: new Date()
-        }
+          updatedAt: new Date(),
+        },
       }
     );
 
-    console.log('Successfully added test members to Tekions team');
-    console.log('New member count:', tekionsTeam.memberUserIds.length);
-    console.log('Team members:', tekionsTeam.memberUserIds);
-
+    console.log("Successfully added test members to Tekions team");
+    console.log("New member count:", tekionsTeam.memberUserIds.length);
+    console.log("Team members:", tekionsTeam.memberUserIds);
   } catch (error) {
-    console.error('Error adding test members:', error);
+    console.error("Error adding test members:", error);
   } finally {
     mongoose.connection.close();
   }

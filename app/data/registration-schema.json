@@ -1,6 +1,6 @@
 {
-  "title": "Smart India Hackathon - Internals (UCEK) Registration",
-  "description": "Register for SIH Internals (UCEK). ",
+  "title": "Smart India Hackathon - Internals (MCAS) Registration",
+  "description": "Register for SIH Internals (MCAS). ",
   "sections": [
     {
       "id": "personal",
@@ -38,9 +38,17 @@
         {
           "key": "department",
           "label": "Department/Batch",
-          "type": "select", 
+          "type": "select",
           "required": true,
-          "options": ["CSE 1", "CSE 2", "IT", "ECE"]
+          "options": [
+            "BSc Electronics",
+            "BCA",
+            "BCom CA",
+            "Bcom TT",
+            "Psychology",
+            "BBA",
+            "BA Economics"
+          ]
         },
         {
           "key": "year",
