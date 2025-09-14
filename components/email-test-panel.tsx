@@ -2,30 +2,29 @@
 
 import { useState } from "react"
 
-export default function BroadcastForm() {
+export default function EmailTestPanel() {
   const [isLoading, setIsLoading] = useState(false)
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleTestEmail = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setIsLoading(true)
     setMessage(null)
 
     const form = e.currentTarget
-    const subject = (form.elements.namedItem("subject") as HTMLInputElement).value
-    const messageText = (form.elements.namedItem("message") as HTMLTextAreaElement).value
+    const testEmail = (form.elements.namedItem("testEmail") as HTMLInputElement).value
 
-    if (!subject.trim() || !messageText.trim()) {
-      setMessage({ type: 'error', text: 'Please fill in both subject and message fields.' })
+    if (!testEmail.trim()) {
+      setMessage({ type: 'error', text: 'Please enter a test email address.' })
       setIsLoading(false)
       return
     }
 
     try {
-      const response = await fetch("/api/dashboard/broadcast", {
+      const response = await fetch("/api/debug/test-email", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ subject, message: messageText }),
+        body: JSON.stringify({ testEmail }),
       })
 
       const result = await response.json()
@@ -33,13 +32,13 @@ export default function BroadcastForm() {
       if (response.ok) {
         setMessage({ 
           type: 'success', 
-          text: result.message || `Broadcast sent successfully to ${result.count} participants!` 
+          text: result.message || `Test email sent successfully to ${testEmail}!` 
         })
         form.reset()
       } else {
         setMessage({ 
           type: 'error', 
-          text: result.error || 'Failed to send broadcast. Please try again.' 
+          text: result.error || 'Failed to send test email.' 
         })
         
         if (result.suggestion) {
@@ -60,9 +59,11 @@ export default function BroadcastForm() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="bg-white rounded-lg shadow-md p-6">
+      <h3 className="text-lg font-semibold text-gray-900 mb-4">🧪 Email Configuration Test</h3>
+      
       {message && (
-        <div className={`p-4 rounded-md border ${
+        <div className={`p-4 rounded-md border mb-4 ${
           message.type === 'success' 
             ? 'bg-green-50 border-green-200 text-green-800' 
             : 'bg-red-50 border-red-200 text-red-800'
@@ -86,29 +87,29 @@ export default function BroadcastForm() {
         </div>
       )}
 
-      <form className="flex flex-col gap-3" onSubmit={handleSubmit}>
-        <input 
-          type="text" 
-          name="subject" 
-          placeholder="Email Subject" 
-          className="rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" 
-          required 
-          disabled={isLoading}
-        />
-        <textarea 
-          name="message" 
-          placeholder="Email Message" 
-          className="min-h-28 rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" 
-          required 
-          disabled={isLoading}
-        />
+      <form onSubmit={handleTestEmail} className="space-y-4">
+        <div>
+          <label htmlFor="testEmail" className="block text-sm font-medium text-gray-700 mb-2">
+            Test Email Address
+          </label>
+          <input
+            type="email"
+            name="testEmail"
+            id="testEmail"
+            placeholder="your-email@example.com"
+            className="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            required
+            disabled={isLoading}
+          />
+        </div>
+        
         <button
           type="submit"
           disabled={isLoading}
-          className={`inline-flex items-center justify-center rounded-md px-4 py-2 text-white font-medium transition-colors ${
+          className={`w-full inline-flex items-center justify-center rounded-md px-4 py-2 text-white font-medium transition-colors ${
             isLoading
               ? 'bg-gray-400 cursor-not-allowed'
-              : 'bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
+              : 'bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2'
           }`}
         >
           {isLoading ? (
@@ -117,15 +118,21 @@ export default function BroadcastForm() {
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
-              Sending...
+              Testing...
             </>
           ) : (
             <>
-              📧 Send Email Broadcast
+              🧪 Send Test Email
             </>
           )}
         </button>
       </form>
+
+      <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
+        <p className="text-sm text-blue-800">
+          <strong>Note:</strong> This will send a registration confirmation email to the specified address to test your SMTP configuration.
+        </p>
+      </div>
     </div>
   )
 }

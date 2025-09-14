@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import BroadcastForm from "@/components/broadcast-form";
+import EmailTestPanel from "@/components/email-test-panel";
 import { useSession, signIn, signOut } from "next-auth/react";
 import type { Session } from "next-auth";
 import Image from "next/image";
@@ -634,19 +635,23 @@ export default function DashboardPage() {
         )}
 
         {activeTab === "broadcast" && (
-          <div className="glass-effect rounded-2xl p-8">
-            <div className="mb-6">
-              <h2 className="text-2xl font-bold text-gradient flex items-center gap-3">
-                <div className="h-10 w-10 rounded-xl bg-primary/20 flex items-center justify-center">
-                  <span className="text-lg">📢</span>
-                </div>
-                Broadcast Communication
-              </h2>
-              <p className="text-muted-foreground mt-2">
-                Send important updates to all registered participants
-              </p>
+          <div className="space-y-8">
+            <div className="glass-effect rounded-2xl p-8">
+              <div className="mb-6">
+                <h2 className="text-2xl font-bold text-gradient flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-xl bg-primary/20 flex items-center justify-center">
+                    <span className="text-lg">📢</span>
+                  </div>
+                  Broadcast Communication
+                </h2>
+                <p className="text-muted-foreground mt-2">
+                  Send important updates to all registered participants
+                </p>
+              </div>
+              <BroadcastForm />
             </div>
-            <BroadcastForm />
+            
+            <EmailTestPanel />
           </div>
         )}
 
