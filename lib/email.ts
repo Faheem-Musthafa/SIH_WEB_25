@@ -48,8 +48,77 @@ Thank you and good luck!
   await transporter.sendMail({ from: FROM, to, subject, text })
 }
 
-export async function sendBroadcastEmail(to: string[], subject: string, message: string) {
+// Helper: split an array into chunks
+function chunk<T>(arr: T[], size: number): T[][] {
+  const out: T[][] = []
+  for (let i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size))
+  return out
+}
+
+export type BroadcastOptions = {
+  chunkSize?: number // recipients per email via BCC
+  delayMs?: number // delay between batches to respect rate limits
+  html?: string // optional HTML version of the message
+  fromOverride?: string // override FROM if needed per broadcast
+}
+
+export type BroadcastResult = {
+  totalRecipients: number
+  batches: number
+  accepted: number
+  rejected: number
+  failedBatches: number
+  errors: string[]
+}
+
+export async function sendBroadcastEmail(
+  to: string[],
+  subject: string,
+  message: string,
+  options: BroadcastOptions = {}
+): Promise<BroadcastResult> {
   const transporter = getTransporter()
-  // Use BCC to avoid exposing recipient emails to each other
-  await transporter.sendMail({ from: FROM, bcc: to, subject, text: message })
+  const {
+    chunkSize = 50,
+    delayMs = 0,
+    html,
+    fromOverride,
+  } = options
+
+  const batches = chunk(to, Math.max(1, chunkSize))
+  let accepted = 0
+  let rejected = 0
+  let failedBatches = 0
+  const errors: string[] = []
+
+  for (let i = 0; i < batches.length; i++) {
+    const bcc = batches[i]
+    try {
+      const info = await transporter.sendMail({
+        from: fromOverride || FROM,
+        // Intentionally use only BCC to hide addresses from each other
+        bcc,
+        subject,
+        text: message,
+        ...(html ? { html } : {}),
+      })
+      accepted += Array.isArray(info.accepted) ? info.accepted.length : 0
+      rejected += Array.isArray(info.rejected) ? info.rejected.length : 0
+    } catch (err: any) {
+      failedBatches += 1
+      errors.push(err?.message || String(err))
+    }
+    if (delayMs > 0 && i < batches.length - 1) {
+      await new Promise((res) => setTimeout(res, delayMs))
+    }
+  }
+
+  return {
+    totalRecipients: to.length,
+    batches: batches.length,
+    accepted,
+    rejected,
+    failedBatches,
+    errors,
+  }
 }

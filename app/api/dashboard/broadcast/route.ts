@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { subject, message } = await req.json().catch(() => ({}))
+  const { subject, message, html, chunkSize, delayMs } = await req.json().catch(() => ({}))
   if (!subject || !message) {
     return NextResponse.json({ error: "Subject and message required" }, { status: 400 })
   }
@@ -23,8 +23,12 @@ export async function POST(req: NextRequest) {
 
   if (to.length === 0) return NextResponse.json({ ok: true, info: "No recipients" })
   try {
-    await sendBroadcastEmail(to, subject, message)
-    return NextResponse.json({ ok: true, count: to.length })
+    const result = await sendBroadcastEmail(to, subject, message, {
+      html,
+      chunkSize: typeof chunkSize === "number" ? chunkSize : undefined,
+      delayMs: typeof delayMs === "number" ? delayMs : undefined,
+    })
+    return NextResponse.json({ ok: true, ...result })
   } catch (e: any) {
     return NextResponse.json({ error: "Failed to send emails", detail: e?.message }, { status: 500 })
   }
