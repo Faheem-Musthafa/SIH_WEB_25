@@ -650,7 +650,7 @@ export default function DashboardPage() {
               </div>
               <BroadcastForm />
             </div>
-            
+
             <EmailTestPanel />
           </div>
         )}

@@ -14,7 +14,7 @@ function getTransporter(): Transporter {
   const port = Number(process.env.SMTP_PORT || 587);
   const user = process.env.SMTP_USER;
   const pass = process.env.SMTP_PASS;
-  
+
   if (!host || !user || !pass) {
     throw new Error(
       "Missing SMTP configuration. Please set SMTP_HOST, SMTP_USER, and SMTP_PASS in your environment variables. Check your .env.local file."
@@ -31,14 +31,16 @@ function getTransporter(): Transporter {
       maxConnections: 5,
       maxMessages: 100,
       connectionTimeout: 10000, // 10 seconds
-      greetingTimeout: 5000,    // 5 seconds
-      socketTimeout: 10000,     // 10 seconds
+      greetingTimeout: 5000, // 5 seconds
+      socketTimeout: 10000, // 10 seconds
     });
 
     global.__mailerTransporter = transporter;
     return transporter;
   } catch (error) {
-    throw new Error(`Failed to create email transporter: ${(error as Error).message}`);
+    throw new Error(
+      `Failed to create email transporter: ${(error as Error).message}`
+    );
   }
 }
 
@@ -46,7 +48,10 @@ const FROM =
   process.env.SMTP_FROM || "SIH Organizers <no-reply@sih-internals.local>";
 
 // Helper function to validate email configuration
-export async function validateEmailConfig(): Promise<{ success: boolean; error?: string }> {
+export async function validateEmailConfig(): Promise<{
+  success: boolean;
+  error?: string;
+}> {
   try {
     const transporter = getTransporter();
     await transporter.verify();
@@ -54,9 +59,9 @@ export async function validateEmailConfig(): Promise<{ success: boolean; error?:
   } catch (error) {
     const errorMessage = (error as Error).message;
     console.error("Email configuration validation failed:", errorMessage);
-    return { 
-      success: false, 
-      error: `Email configuration invalid: ${errorMessage}` 
+    return {
+      success: false,
+      error: `Email configuration invalid: ${errorMessage}`,
     };
   }
 }
@@ -64,7 +69,7 @@ export async function validateEmailConfig(): Promise<{ success: boolean; error?:
 export async function sendRegistrationEmail(to: string, name?: string) {
   const transporter = getTransporter();
   const subject = "SIH Internals (MCAS) - Registration Confirmed ✅";
-  
+
   const html = `
     <!DOCTYPE html>
     <html>
@@ -80,7 +85,7 @@ export async function sendRegistrationEmail(to: string, name?: string) {
       </div>
       
       <div style="background: white; padding: 30px; border: 1px solid #e0e0e0; border-radius: 0 0 10px 10px;">
-        <h2 style="color: #2c3e50; margin-top: 0;">Hi ${name || 'Participant'}! 👋</h2>
+        <h2 style="color: #2c3e50; margin-top: 0;">Hi ${name || "Participant"}! 👋</h2>
         
         <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; border-left: 4px solid #28a745;">
           <p style="margin: 0; font-size: 16px; font-weight: bold; color: #28a745;">✅ Registration Confirmed!</p>
@@ -138,12 +143,12 @@ Thank you and good luck!
 
 — SIH Organizing Team`;
 
-  await transporter.sendMail({ 
-    from: FROM, 
-    to, 
-    subject, 
+  await transporter.sendMail({
+    from: FROM,
+    to,
+    subject,
     text,
-    html 
+    html,
   });
 }
 
@@ -153,7 +158,7 @@ export async function sendBroadcastEmail(
   message: string
 ) {
   const transporter = getTransporter();
-  
+
   const html = `
     <!DOCTYPE html>
     <html>
@@ -172,9 +177,12 @@ export async function sendBroadcastEmail(
         <h2 style="color: #2c3e50; margin-top: 0;">${subject}</h2>
         
         <div style="font-size: 16px; line-height: 1.8; margin: 20px 0;">
-          ${message.split('\n').map(line => 
-            line.trim() ? `<p style="margin: 15px 0;">${line}</p>` : '<br>'
-          ).join('')}
+          ${message
+            .split("\n")
+            .map((line) =>
+              line.trim() ? `<p style="margin: 15px 0;">${line}</p>` : "<br>"
+            )
+            .join("")}
         </div>
         
         <div style="text-align: center; margin: 30px 0; padding-top: 20px; border-top: 1px solid #eee;">
@@ -193,11 +201,11 @@ export async function sendBroadcastEmail(
   `;
 
   // Use BCC to avoid exposing recipient emails to each other
-  await transporter.sendMail({ 
-    from: FROM, 
-    bcc: to, 
-    subject, 
+  await transporter.sendMail({
+    from: FROM,
+    bcc: to,
+    subject,
     text: message,
-    html 
+    html,
   });
 }

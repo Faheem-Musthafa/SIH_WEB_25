@@ -51,6 +51,7 @@ SMTP_FROM=SIH Organizers <your-email@gmail.com>
 ## Setup Steps
 
 ### 1. Configure Vercel Environment Variables
+
 1. Go to [Vercel Dashboard](https://vercel.com/dashboard)
 2. Select your project
 3. Navigate to Settings → Environment Variables
@@ -58,6 +59,7 @@ SMTP_FROM=SIH Organizers <your-email@gmail.com>
 5. Set **NEXTAUTH_URL** to your exact Vercel deployment URL
 
 ### 2. Google OAuth Setup
+
 1. Go to [Google Cloud Console](https://console.cloud.google.com/)
 2. Create or select a project
 3. Enable Google+ API
@@ -69,6 +71,7 @@ SMTP_FROM=SIH Organizers <your-email@gmail.com>
 ### 3. Email Provider Setup
 
 #### Option A: Gmail Setup (Development)
+
 1. Go to [Google Account Settings](https://myaccount.google.com/)
 2. Navigate to Security → 2-Step Verification
 3. Enable 2-Step Verification if not already enabled
@@ -77,6 +80,7 @@ SMTP_FROM=SIH Organizers <your-email@gmail.com>
 6. Use this app password (not your Gmail password) for `SMTP_PASS`
 
 #### Option B: SendGrid Setup (Production - Recommended)
+
 1. Sign up at [SendGrid](https://sendgrid.com/)
 2. Go to Settings → API Keys
 3. Create a new API key with "Full Access"
@@ -84,12 +88,14 @@ SMTP_FROM=SIH Organizers <your-email@gmail.com>
 5. Verify your sender domain/email in SendGrid
 
 #### Option C: Mailtrap Setup (Testing)
+
 1. Sign up at [Mailtrap](https://mailtrap.io/)
 2. Go to Email Testing → Inboxes
 3. Copy SMTP credentials from your inbox settings
 4. Use for testing without sending real emails
 
 ### 4. Generate NextAuth Secret
+
 ```bash
 # Run this command to generate a secure secret
 openssl rand -base64 32
@@ -98,8 +104,10 @@ openssl rand -base64 32
 ## Post-Deployment Testing
 
 ### 1. Test Email Configuration
+
 Visit: `https://your-app.vercel.app/api/debug/test-email`
 Send a POST request with admin authentication:
+
 ```json
 {
   "testEmail": "your-test-email@example.com"
@@ -107,11 +115,13 @@ Send a POST request with admin authentication:
 ```
 
 ### 2. Test Admin Access
+
 1. Visit `https://your-app.vercel.app/dashboard`
 2. Sign in with Google using an admin email
 3. You should see admin dashboard features
 
 ### 3. Test Registration Flow
+
 1. Register a new participant
 2. Check if registration confirmation email is received
 3. Test broadcast email functionality from admin dashboard
@@ -119,16 +129,19 @@ Send a POST request with admin authentication:
 ## Email Features
 
 ### Automatic Registration Emails
+
 - **Trigger**: When users complete registration
 - **Content**: Welcome message with next steps
 - **Styling**: Professional HTML template with SIH branding
 
 ### Admin Broadcast Emails
+
 - **Access**: Admin dashboard → Broadcast section
 - **Features**: Send announcements to all registered participants
 - **Styling**: Branded HTML template with proper formatting
 
 ### Email Templates Include:
+
 - 🎨 Professional HTML design with SIH branding
 - 📱 Mobile-responsive layouts
 - ✅ Success confirmation styling
@@ -138,18 +151,21 @@ Send a POST request with admin authentication:
 ## Troubleshooting
 
 ### Email Issues
+
 - **Authentication Failed**: Check SMTP username and password
 - **Connection Timeout**: Verify SMTP host and port settings
 - **Emails Not Sending**: Check spam folders, verify SMTP configuration
 - **Gmail Issues**: Ensure app password is used, not regular password
 
 ### General Issues
+
 - Check Vercel function logs for detailed errors
 - Verify all environment variables are set correctly
 - Ensure Google OAuth redirect URIs match exactly
 - Confirm admin emails are properly configured
 
 ## Security Notes
+
 - Never commit actual secrets to git
 - Use strong passwords for admin accounts
 - Regularly rotate NextAuth secret and API keys
