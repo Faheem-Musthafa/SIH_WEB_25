@@ -22,7 +22,7 @@ function getTransporter(): Transporter {
   }
 
   try {
-    const transporter = nodemailer.createTransporter({
+    const transporter = nodemailer.createTransport({
       host,
       port,
       secure: port === 465,
