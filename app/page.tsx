@@ -34,7 +34,7 @@ export default function Page() {
               Contact
             </a>
           </div>
-          <button className="btn-primary">Get Started</button>
+          {/* <bustton className="btn-primary">Get Started</button> */}
         </div>
       </nav>
 
