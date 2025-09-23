@@ -1,4 +1,4 @@
-import mongoose, { Schema, type InferSchemaType } from "mongoose"
+import mongoose, { Schema, type InferSchemaType } from "mongoose";
 
 const ParticipantSchema = new Schema(
   {
@@ -8,11 +8,14 @@ const ParticipantSchema = new Schema(
     userId: { type: String, required: true, unique: true, index: true },
     // using Mixed for flexible JSON-driven fields
     fields: { type: Schema.Types.Mixed, default: {} },
+    // Problem statement selection
+    problemStatement: { type: String, default: null },
   },
-  { timestamps: { createdAt: "createdAt", updatedAt: "updatedAt" } },
-)
+  { timestamps: { createdAt: "createdAt", updatedAt: "updatedAt" } }
+);
 
-export type ParticipantDoc = InferSchemaType<typeof ParticipantSchema>
+export type ParticipantDoc = InferSchemaType<typeof ParticipantSchema>;
 
-export default (mongoose.models.Participant as mongoose.Model<ParticipantDoc>) ||
-  mongoose.model<ParticipantDoc>("Participant", ParticipantSchema)
+export default (mongoose.models
+  .Participant as mongoose.Model<ParticipantDoc>) ||
+  mongoose.model<ParticipantDoc>("Participant", ParticipantSchema);

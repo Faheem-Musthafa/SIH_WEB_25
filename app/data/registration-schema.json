@@ -19,7 +19,11 @@
           "label": "Gender",
           "type": "select",
           "required": true,
-          "options": ["male", "female", "non-binary"]
+          "options": [
+            "male",
+            "female",
+            "non-binary"
+          ]
         },
         {
           "key": "phone",
@@ -55,7 +59,26 @@
           "label": "Year of Study",
           "type": "select",
           "required": true,
-          "options": ["1", "2", "3", "4"]
+          "options": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "problem-statement",
+      "title": "Problem Statement Selection",
+      "description": "Choose your preferred problem statement for the hackathon.",
+      "fields": [
+        {
+          "key": "problemStatement",
+          "label": "Problem Statement",
+          "type": "problem-selector",
+          "required": true,
+          "placeholder": "Select a problem statement that interests you"
         }
       ]
     }

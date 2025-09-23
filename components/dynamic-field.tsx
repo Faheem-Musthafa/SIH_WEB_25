@@ -1,13 +1,15 @@
-"use client"
+"use client";
+
+import ProblemStatementSelector from "./problem-statement-selector";
 
 type Field = {
-  key: string
-  label: string
-  type: "text" | "select" | "textarea"
-  required?: boolean
-  options?: string[]
-  placeholder?: string
-}
+  key: string;
+  label: string;
+  type: "text" | "select" | "textarea" | "problem-selector";
+  required?: boolean;
+  options?: string[];
+  placeholder?: string;
+};
 
 export function DynamicField({
   field,
@@ -15,17 +17,24 @@ export function DynamicField({
   onChange,
   disabled,
 }: {
-  field: Field
-  value: string
-  onChange: (k: string, v: string) => void
-  disabled?: boolean
+  field: Field;
+  value: string;
+  onChange: (k: string, v: string) => void;
+  disabled?: boolean;
 }) {
   return (
     <div className="flex flex-col gap-2">
       <label className="text-sm font-medium text-gray-700" htmlFor={field.key}>
-        {field.label} {field.required ? <span className="text-red-600">*</span> : null}
+        {field.label}{" "}
+        {field.required ? <span className="text-red-600">*</span> : null}
       </label>
-      {field.type === "select" ? (
+      {field.type === "problem-selector" ? (
+        <ProblemStatementSelector
+          field={field}
+          value={value || ""}
+          onChange={onChange}
+        />
+      ) : field.type === "select" ? (
         <select
           id={field.key}
           value={value || ""}
@@ -62,5 +71,5 @@ export function DynamicField({
         />
       )}
     </div>
-  )
+  );
 }

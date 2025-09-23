@@ -364,7 +364,7 @@ export default function RegistrationForm() {
               </p>
             )}
           </div>
-          
+
           {/* Auth Section - Mobile Responsive */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 text-sm">
             {sessionEmail && (
@@ -392,7 +392,9 @@ export default function RegistrationForm() {
           <div className="mt-2 flex justify-between text-xs text-gray-600">
             <span>Step {Math.min(currentStep + 1, totalSteps)}</span>
             <span className="hidden sm:inline">{totalSteps} Total Steps</span>
-            <span className="sm:hidden">{Math.min(currentStep + 1, totalSteps)}/{totalSteps}</span>
+            <span className="sm:hidden">
+              {Math.min(currentStep + 1, totalSteps)}/{totalSteps}
+            </span>
           </div>
         </div>
 
@@ -417,7 +419,9 @@ export default function RegistrationForm() {
                   </svg>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-red-800 font-medium text-sm break-words">{error}</p>
+                  <p className="text-red-800 font-medium text-sm break-words">
+                    {error}
+                  </p>
                 </div>
                 <button
                   type="button"
@@ -449,7 +453,9 @@ export default function RegistrationForm() {
                   </svg>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-green-800 font-medium text-sm break-words">{info}</p>
+                  <p className="text-green-800 font-medium text-sm break-words">
+                    {info}
+                  </p>
                 </div>
                 <button
                   type="button"
@@ -523,7 +529,9 @@ export default function RegistrationForm() {
                       />
                     </svg>
                   </div>
-                  <p className="text-green-800 font-medium text-sm sm:text-base">Signed in as</p>
+                  <p className="text-green-800 font-medium text-sm sm:text-base">
+                    Signed in as
+                  </p>
                   <p className="text-green-700 font-semibold text-base sm:text-lg break-all px-2">
                     {sessionEmail}
                   </p>
@@ -567,7 +575,9 @@ export default function RegistrationForm() {
                         {section.title}
                       </h3>
                       {section.description && (
-                        <p className="text-gray-700 text-sm sm:text-base px-4">{section.description}</p>
+                        <p className="text-gray-700 text-sm sm:text-base px-4">
+                          {section.description}
+                        </p>
                       )}
                     </div>
                     <div className="grid gap-4 sm:gap-6">
@@ -652,12 +662,37 @@ export default function RegistrationForm() {
                           </p>
                         </div>
                       </div>
-                      
+
                       {/* Action Buttons - Mobile Responsive */}
                       <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
                         {isLeader ? (
                           <>
                             <NotificationBell />
+                            <a
+                              href="/team-management"
+                              className="btn-secondary text-indigo-600 hover:bg-indigo-50 border-indigo-200 text-sm inline-flex items-center justify-center gap-2"
+                            >
+                              <svg
+                                className="w-4 h-4"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                                />
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                                />
+                              </svg>
+                              Manage Team
+                            </a>
                             <button
                               type="button"
                               onClick={async () => {
@@ -681,25 +716,46 @@ export default function RegistrationForm() {
                             </button>
                           </>
                         ) : (
-                          <button
-                            type="button"
-                            onClick={async () => {
-                              if (confirm("Exit this team?")) {
-                                const r = await fetch("/api/team/leave", {
-                                  method: "POST",
-                                });
-                                if (r.ok) {
-                                  setInfo("Exited team");
-                                  await mutateTeam();
-                                } else {
-                                  setError("Failed to exit team");
+                          <>
+                            <a
+                              href="/team-management"
+                              className="btn-secondary text-indigo-600 hover:bg-indigo-50 border-indigo-200 text-sm inline-flex items-center justify-center gap-2"
+                            >
+                              <svg
+                                className="w-4 h-4"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                                />
+                              </svg>
+                              View Team
+                            </a>
+                            <button
+                              type="button"
+                              onClick={async () => {
+                                if (confirm("Exit this team?")) {
+                                  const r = await fetch("/api/team/leave", {
+                                    method: "POST",
+                                  });
+                                  if (r.ok) {
+                                    setInfo("Exited team");
+                                    await mutateTeam();
+                                  } else {
+                                    setError("Failed to exit team");
+                                  }
                                 }
-                              }
-                            }}
-                            className="btn-secondary text-amber-600 hover:bg-amber-50 border-amber-200 text-sm"
-                          >
-                            Exit Team
-                          </button>
+                              }}
+                              className="btn-secondary text-amber-600 hover:bg-amber-50 border-amber-200 text-sm"
+                            >
+                              Exit Team
+                            </button>
+                          </>
                         )}
                       </div>
                     </div>
@@ -766,29 +822,75 @@ export default function RegistrationForm() {
                         </div>
                         <div className="border-t border-green-200 pt-4">
                           <p className="text-green-700 font-medium mb-3 text-sm sm:text-base">
-                            🚀 Next Step: Choose Your Problem Statement
+                            🚀 Next Steps:
                           </p>
-                          <a
-                            href="https://sih.gov.in/sih2025PS"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="btn-primary inline-flex items-center gap-2 text-sm sm:text-base w-full sm:w-auto justify-center"
-                          >
-                            <svg
-                              className="w-4 h-4"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
+                          <div className="space-y-2">
+                            <a
+                              href="/team-management"
+                              className="btn-secondary inline-flex items-center gap-2 text-sm w-full sm:w-auto justify-center"
                             >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                              />
-                            </svg>
-                            View SIH 2025 Problem Statements
-                          </a>
+                              <svg
+                                className="w-4 h-4"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                                />
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                                />
+                              </svg>
+                              Manage Team
+                            </a>
+                            <a
+                              href="/problem-selection"
+                              className="btn-primary inline-flex items-center gap-2 text-sm sm:text-base w-full sm:w-auto justify-center"
+                            >
+                              <svg
+                                className="w-4 h-4"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                                />
+                              </svg>
+                              Select Problem Statement
+                            </a>
+                            <a
+                              href="https://sih.gov.in/sih2025PS"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="btn-secondary inline-flex items-center gap-2 text-sm w-full sm:w-auto justify-center"
+                            >
+                              <svg
+                                className="w-4 h-4"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                                />
+                              </svg>
+                              View Official Problem Statements
+                            </a>
+                          </div>
                         </div>
                       </div>
                     )}
@@ -882,9 +984,9 @@ export default function RegistrationForm() {
                         Join Our WhatsApp Community
                       </h4>
                       <p className="text-emerald-700 text-xs sm:text-sm mb-4 leading-relaxed">
-                        Stay updated with announcements, resources, and networking
-                        opportunities for SIH 2025 participants while you form
-                        your team.
+                        Stay updated with announcements, resources, and
+                        networking opportunities for SIH 2025 participants while
+                        you form your team.
                       </p>
                       <a
                         href="https://chat.whatsapp.com/Hb81DgrYqn8ApptdhZb3sv"
@@ -934,7 +1036,9 @@ export default function RegistrationForm() {
                             <h4 className="font-semibold text-primary text-sm sm:text-base">
                               Create Team
                             </h4>
-                            <p className="text-blue-600 text-xs sm:text-sm">Leader</p>
+                            <p className="text-blue-600 text-xs sm:text-sm">
+                              Leader
+                            </p>
                           </div>
                         </div>
                         <p className="text-gray-700 text-xs sm:text-sm mb-4">
@@ -979,7 +1083,9 @@ export default function RegistrationForm() {
                             <h4 className="font-semibold text-primary text-sm sm:text-base">
                               Join Team
                             </h4>
-                            <p className="text-indigo-600 text-xs sm:text-sm">Member</p>
+                            <p className="text-indigo-600 text-xs sm:text-sm">
+                              Member
+                            </p>
                           </div>
                         </div>
                         <p className="text-gray-700 text-xs sm:text-sm mb-4">
@@ -1021,7 +1127,9 @@ export default function RegistrationForm() {
                             <h4 className="font-semibold text-primary text-sm sm:text-base">
                               Find Teams
                             </h4>
-                            <p className="text-purple-600 text-xs sm:text-sm">Discovery</p>
+                            <p className="text-purple-600 text-xs sm:text-sm">
+                              Discovery
+                            </p>
                           </div>
                         </div>
                         <p className="text-gray-700 text-xs sm:text-sm mb-4">

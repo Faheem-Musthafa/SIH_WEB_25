@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import BroadcastForm from "@/components/broadcast-form";
 import EmailTestPanel from "@/components/email-test-panel";
+import ExportOptions from "@/components/export-options";
 import { useSession, signIn, signOut } from "next-auth/react";
 import type { Session } from "next-auth";
 import Image from "next/image";
@@ -17,6 +18,7 @@ export default function DashboardPage() {
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [expandedTeam, setExpandedTeam] = useState<string | null>(null);
+  const [showExportOptions, setShowExportOptions] = useState(false);
 
   // Team helper functions
   const getTeamMembers = (team: any) => {
@@ -233,7 +235,10 @@ export default function DashboardPage() {
                 </svg>
               </button>
 
-              <a href="/api/dashboard/export" className="btn-primary">
+              <button
+                onClick={() => setShowExportOptions(true)}
+                className="btn-primary"
+              >
                 <svg
                   className="h-4 w-4 mr-2"
                   fill="none"
@@ -248,7 +253,7 @@ export default function DashboardPage() {
                   />
                 </svg>
                 Export
-              </a>
+              </button>
 
               <button
                 onClick={() => signOut()}
@@ -594,8 +599,8 @@ export default function DashboardPage() {
                   </div>
                 </button>
 
-                <a
-                  href="/api/dashboard/export"
+                <button
+                  onClick={() => setShowExportOptions(true)}
                   className="block w-full glass-effect rounded-xl p-4 text-left card-hover group"
                 >
                   <div className="flex items-center gap-4">
@@ -611,7 +616,7 @@ export default function DashboardPage() {
                       </div>
                     </div>
                   </div>
-                </a>
+                </button>
 
                 <button
                   onClick={() => setActiveTab("teams")}
@@ -984,6 +989,11 @@ export default function DashboardPage() {
           </div>
         )}
       </main>
+
+      {/* Export Options Modal */}
+      {showExportOptions && (
+        <ExportOptions onClose={() => setShowExportOptions(false)} />
+      )}
     </div>
   );
 }

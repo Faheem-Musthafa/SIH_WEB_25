@@ -30,6 +30,18 @@ export default function Page() {
             >
               Register
             </a>
+            <a
+              href="/team-management"
+              className="transition-colors hover:text-primary"
+            >
+              Team Management
+            </a>
+            <a
+              href="/problem-selection"
+              className="transition-colors hover:text-primary"
+            >
+              Problem Statements
+            </a>
             <a href="#contact" className="transition-colors hover:text-primary">
               Contact
             </a>

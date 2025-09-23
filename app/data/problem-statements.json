@@ -1,0 +1,393 @@
+{
+  "categories": [
+    {
+      "id": "software",
+      "name": "Software",
+      "description": "Software-based solutions and applications",
+      "icon": "💻",
+      "color": "blue"
+    },
+    {
+      "id": "hardware",
+      "name": "Hardware",
+      "description": "Hardware-based innovations and devices",
+      "icon": "🔧",
+      "color": "gray"
+    },
+    {
+      "id": "student-innovation",
+      "name": "Student Innovation",
+      "description": "Innovation projects by students for students",
+      "icon": "🎓",
+      "color": "green"
+    },
+    {
+      "id": "smart-automation",
+      "name": "Smart Automation",
+      "description": "Automation and smart technology solutions",
+      "icon": "🤖",
+      "color": "purple"
+    },
+    {
+      "id": "miscellaneous",
+      "name": "Miscellaneous",
+      "description": "Other innovative solutions",
+      "icon": "🔬",
+      "color": "indigo"
+    }
+  ],
+  "problemStatements": [
+    {
+      "id": "SIH1697",
+      "title": "AI-powered Traffic Management System",
+      "category": "software",
+      "theme": "Smart Vehicles",
+      "description": "Develop an AI-powered traffic management system that can dynamically adjust traffic signals based on real-time traffic conditions, reduce congestion, and improve overall traffic flow in urban areas.",
+      "complexity": "Medium",
+      "domain": "Transportation & Logistics",
+      "organization": "Ministry of Road Transport and Highways",
+      "techStack": [
+        "AI/ML",
+        "Computer Vision",
+        "IoT",
+        "Real-time Analytics"
+      ],
+      "expectedOutcome": "Reduction in traffic congestion by 30-40% and improvement in fuel efficiency",
+      "prizes": {
+        "winner": "₹1,00,000",
+        "runnerUp1": "₹75,000",
+        "runnerUp2": "₹50,000"
+      }
+    },
+    {
+      "id": "SIH1698",
+      "title": "Blockchain-based Supply Chain Transparency",
+      "category": "software",
+      "theme": "Blockchain & Cybersecurity",
+      "description": "Create a blockchain-based solution for ensuring transparency and traceability in supply chains, particularly for agricultural products and pharmaceuticals.",
+      "complexity": "High",
+      "domain": "Supply Chain Management",
+      "organization": "Department of Food & Public Distribution",
+      "techStack": [
+        "Blockchain",
+        "Smart Contracts",
+        "Web3",
+        "IPFS"
+      ],
+      "expectedOutcome": "100% traceability of products from origin to consumer",
+      "prizes": {
+        "winner": "₹1,00,000",
+        "runnerUp1": "₹75,000",
+        "runnerUp2": "₹50,000"
+      }
+    },
+    {
+      "id": "SIH1699",
+      "title": "Smart Healthcare Monitoring Device",
+      "category": "hardware",
+      "theme": "Healthcare & Biomedical Devices",
+      "description": "Design a wearable device that continuously monitors vital signs and alerts healthcare providers in case of emergencies, especially for elderly patients living alone.",
+      "complexity": "High",
+      "domain": "Healthcare",
+      "organization": "Ministry of Health and Family Welfare",
+      "techStack": [
+        "IoT Sensors",
+        "Embedded Systems",
+        "Wireless Communication",
+        "Mobile App"
+      ],
+      "expectedOutcome": "24/7 health monitoring with 95% accuracy in emergency detection",
+      "prizes": {
+        "winner": "₹1,00,000",
+        "runnerUp1": "₹75,000",
+        "runnerUp2": "₹50,000"
+      }
+    },
+    {
+      "id": "SIH1700",
+      "title": "Digital Library Management System",
+      "category": "student-innovation",
+      "theme": "Education Technology",
+      "description": "Develop a comprehensive digital library management system that allows students to access, borrow, and return books digitally while maintaining inventory and user management.",
+      "complexity": "Medium",
+      "domain": "Education",
+      "organization": "Ministry of Education",
+      "techStack": [
+        "Web Development",
+        "Database Management",
+        "Mobile App",
+        "QR Codes"
+      ],
+      "expectedOutcome": "Paperless library system with 50% reduction in administrative work",
+      "prizes": {
+        "winner": "₹1,00,000",
+        "runnerUp1": "₹75,000",
+        "runnerUp2": "₹50,000"
+      }
+    },
+    {
+      "id": "SIH1701",
+      "title": "Smart Parking System",
+      "category": "smart-automation",
+      "theme": "Smart Cities",
+      "description": "Create an automated parking system that guides drivers to available parking spots using sensors and mobile applications, reducing time spent searching for parking.",
+      "complexity": "Medium",
+      "domain": "Urban Planning",
+      "organization": "Ministry of Housing and Urban Affairs",
+      "techStack": [
+        "IoT Sensors",
+        "Mobile App",
+        "Real-time Processing",
+        "GPS"
+      ],
+      "expectedOutcome": "60% reduction in parking search time and better space utilization",
+      "prizes": {
+        "winner": "₹1,00,000",
+        "runnerUp1": "₹75,000",
+        "runnerUp2": "₹50,000"
+      }
+    },
+    {
+      "id": "SIH1702",
+      "title": "Waste Management Optimization",
+      "category": "miscellaneous",
+      "theme": "Environment & Sustainability",
+      "description": "Develop a solution to optimize waste collection routes and schedules using AI and IoT sensors to monitor fill levels of waste bins across the city.",
+      "complexity": "Medium",
+      "domain": "Environmental Science",
+      "organization": "Ministry of Environment, Forest and Climate Change",
+      "techStack": [
+        "AI/ML",
+        "IoT",
+        "Route Optimization",
+        "Data Analytics"
+      ],
+      "expectedOutcome": "30% reduction in waste collection costs and improved cleanliness",
+      "prizes": {
+        "winner": "₹1,00,000",
+        "runnerUp1": "₹75,000",
+        "runnerUp2": "₹50,000"
+      }
+    },
+    {
+      "id": "SIH1703",
+      "title": "AI-powered Crop Disease Detection",
+      "category": "software",
+      "theme": "Agriculture & FoodTech",
+      "description": "Build an AI-powered mobile application that can identify crop diseases through image recognition and provide treatment recommendations to farmers.",
+      "complexity": "High",
+      "domain": "Agriculture",
+      "organization": "Ministry of Agriculture and Farmers Welfare",
+      "techStack": [
+        "Computer Vision",
+        "Machine Learning",
+        "Mobile App",
+        "Image Processing"
+      ],
+      "expectedOutcome": "85% accuracy in disease detection and 20% increase in crop yield",
+      "prizes": {
+        "winner": "₹1,00,000",
+        "runnerUp1": "₹75,000",
+        "runnerUp2": "₹50,000"
+      }
+    },
+    {
+      "id": "SIH1704",
+      "title": "Smart Water Quality Monitoring",
+      "category": "hardware",
+      "theme": "Clean Water & Sanitation",
+      "description": "Design an IoT-based water quality monitoring system that continuously checks water parameters and alerts authorities about contamination in real-time.",
+      "complexity": "Medium",
+      "domain": "Environmental Monitoring",
+      "organization": "Ministry of Jal Shakti",
+      "techStack": [
+        "IoT Sensors",
+        "Water Quality Sensors",
+        "Wireless Communication",
+        "Dashboard"
+      ],
+      "expectedOutcome": "Real-time water quality monitoring with 99% uptime",
+      "prizes": {
+        "winner": "₹1,00,000",
+        "runnerUp1": "₹75,000",
+        "runnerUp2": "₹50,000"
+      }
+    },
+    {
+      "id": "SIH1705",
+      "title": "Student Performance Analytics Platform",
+      "category": "student-innovation",
+      "theme": "Education Analytics",
+      "description": "Create a comprehensive platform that analyzes student performance data to provide personalized learning recommendations and identify students at risk of dropping out.",
+      "complexity": "Medium",
+      "domain": "Education Technology",
+      "organization": "Ministry of Education",
+      "techStack": [
+        "Data Analytics",
+        "Machine Learning",
+        "Web Platform",
+        "Visualization"
+      ],
+      "expectedOutcome": "Personalized learning paths for students and 25% improvement in academic outcomes",
+      "prizes": {
+        "winner": "₹1,00,000",
+        "runnerUp1": "₹75,000",
+        "runnerUp2": "₹50,000"
+      }
+    },
+    {
+      "id": "SIH1706",
+      "title": "Smart Energy Management System",
+      "category": "smart-automation",
+      "theme": "Renewable Energy",
+      "description": "Develop an automated energy management system for smart homes that optimizes energy consumption based on usage patterns and renewable energy availability.",
+      "complexity": "High",
+      "domain": "Energy Management",
+      "organization": "Ministry of New and Renewable Energy",
+      "techStack": [
+        "IoT",
+        "Smart Meters",
+        "Machine Learning",
+        "Home Automation"
+      ],
+      "expectedOutcome": "30% reduction in energy consumption and optimal use of renewable energy",
+      "prizes": {
+        "winner": "₹1,00,000",
+        "runnerUp1": "₹75,000",
+        "runnerUp2": "₹50,000"
+      }
+    },
+    {
+      "id": "SIH1707",
+      "title": "Disaster Early Warning System",
+      "category": "miscellaneous",
+      "theme": "Disaster Management",
+      "description": "Build an early warning system for natural disasters using satellite data, weather sensors, and AI to predict and alert communities about potential disasters.",
+      "complexity": "High",
+      "domain": "Disaster Management",
+      "organization": "National Disaster Management Authority",
+      "techStack": [
+        "Satellite Data",
+        "AI/ML",
+        "Weather APIs",
+        "Alert Systems"
+      ],
+      "expectedOutcome": "Early warning 6-12 hours before disaster onset with 90% accuracy",
+      "prizes": {
+        "winner": "₹1,00,000",
+        "runnerUp1": "₹75,000",
+        "runnerUp2": "₹50,000"
+      }
+    },
+    {
+      "id": "SIH1708",
+      "title": "Digital Identity Verification System",
+      "category": "software",
+      "theme": "Digital Governance",
+      "description": "Create a secure digital identity verification system using biometrics and blockchain technology for various government services and applications.",
+      "complexity": "High",
+      "domain": "Digital Identity",
+      "organization": "Ministry of Electronics and Information Technology",
+      "techStack": [
+        "Blockchain",
+        "Biometric Authentication",
+        "Cryptography",
+        "APIs"
+      ],
+      "expectedOutcome": "Secure and efficient identity verification with 99.9% accuracy",
+      "prizes": {
+        "winner": "₹1,00,000",
+        "runnerUp1": "₹75,000",
+        "runnerUp2": "₹50,000"
+      }
+    },
+    {
+      "id": "SIH1709",
+      "title": "Smart Agriculture Drone System",
+      "category": "hardware",
+      "theme": "Precision Agriculture",
+      "description": "Design an autonomous drone system for precision agriculture that can monitor crop health, spray pesticides, and collect field data automatically.",
+      "complexity": "High",
+      "domain": "Agriculture Technology",
+      "organization": "Ministry of Agriculture and Farmers Welfare",
+      "techStack": [
+        "Drone Technology",
+        "Computer Vision",
+        "GPS",
+        "Sensors"
+      ],
+      "expectedOutcome": "Automated farming operations with 40% reduction in pesticide usage",
+      "prizes": {
+        "winner": "₹1,00,000",
+        "runnerUp1": "₹75,000",
+        "runnerUp2": "₹50,000"
+      }
+    },
+    {
+      "id": "SIH1710",
+      "title": "Virtual Classroom Platform",
+      "category": "student-innovation",
+      "theme": "Remote Learning",
+      "description": "Develop an interactive virtual classroom platform with features like real-time collaboration, assessment tools, and accessibility features for students with disabilities.",
+      "complexity": "Medium",
+      "domain": "Education Technology",
+      "organization": "Ministry of Education",
+      "techStack": [
+        "Web RTC",
+        "Real-time Communication",
+        "Accessibility APIs",
+        "Cloud Computing"
+      ],
+      "expectedOutcome": "Inclusive online learning platform with 95% student engagement",
+      "prizes": {
+        "winner": "₹1,00,000",
+        "runnerUp1": "₹75,000",
+        "runnerUp2": "₹50,000"
+      }
+    },
+    {
+      "id": "SIH1711",
+      "title": "Smart Home Security System",
+      "category": "smart-automation",
+      "theme": "Home Automation",
+      "description": "Create an intelligent home security system that uses computer vision and AI to detect intruders, recognize family members, and provide smart alerts.",
+      "complexity": "Medium",
+      "domain": "Security Technology",
+      "organization": "Ministry of Home Affairs",
+      "techStack": [
+        "Computer Vision",
+        "Facial Recognition",
+        "IoT",
+        "Mobile Alerts"
+      ],
+      "expectedOutcome": "Comprehensive home security with 95% accurate threat detection",
+      "prizes": {
+        "winner": "₹1,00,000",
+        "runnerUp1": "₹75,000",
+        "runnerUp2": "₹50,000"
+      }
+    },
+    {
+      "id": "SIH1712",
+      "title": "Mental Health Support Chatbot",
+      "category": "miscellaneous",
+      "theme": "Mental Health Technology",
+      "description": "Develop an AI-powered chatbot that provides mental health support, mood tracking, and connects users with professional help when needed.",
+      "complexity": "Medium",
+      "domain": "Healthcare Technology",
+      "organization": "Ministry of Health and Family Welfare",
+      "techStack": [
+        "Natural Language Processing",
+        "AI Chatbot",
+        "Sentiment Analysis",
+        "Mobile App"
+      ],
+      "expectedOutcome": "24/7 mental health support with professional intervention capability",
+      "prizes": {
+        "winner": "₹1,00,000",
+        "runnerUp1": "₹75,000",
+        "runnerUp2": "₹50,000"
+      }
+    }
+  ]
+}
