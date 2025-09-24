@@ -65,6 +65,12 @@ export async function GET(request: NextRequest) {
 
   function getProblemStatementTitle(id: string | null) {
     if (!id) return "Not Selected";
+
+    // Handle custom problem statements
+    if (id.startsWith("CUSTOM_")) {
+      return "Custom Problem Statement";
+    }
+
     const problem = problemStatementsData.problemStatements.find(
       (p: any) => p.id === id
     );
@@ -146,6 +152,17 @@ export async function GET(request: NextRequest) {
       (p: any) => p.id === t.problemStatement
     );
 
+    // Handle custom problem statements
+    const isCustomProblem =
+      t.problemStatement && t.problemStatement.startsWith("CUSTOM_");
+    const problemStatementInfo = isCustomProblem
+      ? {
+          title: "Custom Problem Statement",
+          category: "Custom",
+          complexity: "Unknown",
+        }
+      : problemStatement;
+
     return {
       teamName: t.name,
       inviteCode: t.inviteCode,
@@ -155,9 +172,10 @@ export async function GET(request: NextRequest) {
       isComplete: memberEmails.length >= 6 ? "Yes" : "No",
       completionStatus: `${memberEmails.length}/6`,
       problemStatementId: t.problemStatement || "Not Selected",
-      problemStatementTitle: problemStatement?.title || "Not Selected",
-      problemStatementCategory: problemStatement?.category || "N/A",
-      problemStatementComplexity: problemStatement?.complexity || "N/A",
+      problemStatementTitle: problemStatementInfo?.title || "Not Selected",
+      problemStatementCategory: problemStatementInfo?.category || "N/A",
+      problemStatementComplexity: problemStatementInfo?.complexity || "N/A",
+      isCustomProblem: isCustomProblem ? "Yes" : "No",
       createdDate: (t as any).createdAt,
       description: t.description || "",
       skillsNeeded: (t.skillsNeeded || []).join(", "),

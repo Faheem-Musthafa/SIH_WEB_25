@@ -35,6 +35,15 @@ interface ProblemStatementSelectorProps {
   field: any;
 }
 
+interface CustomProblemStatement {
+  title: string;
+  description: string;
+  category: string;
+  complexity: string;
+  expectedOutcome: string;
+  techStack: string[];
+}
+
 const ProblemStatementSelector: React.FC<ProblemStatementSelectorProps> = ({
   value,
   onChange,
@@ -44,6 +53,16 @@ const ProblemStatementSelector: React.FC<ProblemStatementSelectorProps> = ({
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [showDetails, setShowDetails] = useState<string | null>(null);
   const [complexityFilter, setComplexityFilter] = useState<string>("all");
+  const [showCustomForm, setShowCustomForm] = useState<boolean>(false);
+  const [customProblem, setCustomProblem] = useState<CustomProblemStatement>({
+    title: "",
+    description: "",
+    category: "Software",
+    complexity: "Medium",
+    expectedOutcome: "",
+    techStack: [],
+  });
+  const [techStackInput, setTechStackInput] = useState<string>("");
 
   const categories: Category[] = problemStatementsData.categories;
   const problemStatements: ProblemStatement[] =
@@ -89,11 +108,82 @@ const ProblemStatementSelector: React.FC<ProblemStatementSelectorProps> = ({
   };
 
   const selectedProblem = problemStatements.find((p) => p.id === value);
+  const isCustomProblem = value && value.startsWith("CUSTOM_");
+
+  const handleCustomSubmit = () => {
+    if (!customProblem.title || !customProblem.description) {
+      alert(
+        "Please fill in at least the title and description for your custom problem statement."
+      );
+      return;
+    }
+
+    // Create a unique ID for the custom problem
+    const customId = `CUSTOM_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+
+    // Store custom problem in localStorage for persistence
+    const customProblems = JSON.parse(
+      localStorage.getItem("customProblems") || "{}"
+    );
+    customProblems[customId] = {
+      id: customId,
+      ...customProblem,
+      techStack:
+        customProblem.techStack.length > 0
+          ? customProblem.techStack
+          : ["Not Specified"],
+      isCustom: true,
+      createdAt: new Date().toISOString(),
+    };
+    localStorage.setItem("customProblems", JSON.stringify(customProblems));
+
+    onChange(field.key, customId);
+    setShowCustomForm(false);
+
+    // Reset form
+    setCustomProblem({
+      title: "",
+      description: "",
+      category: "Software",
+      complexity: "Medium",
+      expectedOutcome: "",
+      techStack: [],
+    });
+    setTechStackInput("");
+  };
+
+  const handleAddTech = () => {
+    if (
+      techStackInput.trim() &&
+      !customProblem.techStack.includes(techStackInput.trim())
+    ) {
+      setCustomProblem((prev) => ({
+        ...prev,
+        techStack: [...prev.techStack, techStackInput.trim()],
+      }));
+      setTechStackInput("");
+    }
+  };
+
+  const handleRemoveTech = (tech: string) => {
+    setCustomProblem((prev) => ({
+      ...prev,
+      techStack: prev.techStack.filter((t) => t !== tech),
+    }));
+  };
+
+  // Get custom problem from localStorage if it's a custom one
+  const getCustomProblem = (id: string) => {
+    const customProblems = JSON.parse(
+      localStorage.getItem("customProblems") || "{}"
+    );
+    return customProblems[id] || null;
+  };
 
   return (
     <div className="space-y-6">
       {/* Selected Problem Display */}
-      {selectedProblem && (
+      {(selectedProblem || isCustomProblem) && (
         <div className="glass-effect rounded-xl border-2 border-green-200 bg-gradient-to-r from-green-50/50 to-emerald-50/50 p-4">
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1 min-w-0">
@@ -101,25 +191,53 @@ const ProblemStatementSelector: React.FC<ProblemStatementSelectorProps> = ({
                 <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-green-100 text-green-800">
                   Selected
                 </span>
-                <span className="text-sm font-medium text-gray-600">
-                  {selectedProblem.id}
-                </span>
+                {isCustomProblem ? (
+                  <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-purple-100 text-purple-800">
+                    Custom Problem
+                  </span>
+                ) : (
+                  <span className="text-sm font-medium text-gray-600">
+                    {selectedProblem?.id}
+                  </span>
+                )}
               </div>
               <h3 className="text-lg font-semibold text-primary mb-2">
-                {selectedProblem.title}
+                {isCustomProblem
+                  ? getCustomProblem(value)?.title
+                  : selectedProblem?.title}
               </h3>
               <p className="text-sm text-gray-700 mb-3">
-                {selectedProblem.description}
+                {isCustomProblem
+                  ? getCustomProblem(value)?.description
+                  : selectedProblem?.description}
               </p>
               <div className="flex flex-wrap gap-2">
-                <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-blue-100 text-blue-800">
-                  {selectedProblem.theme}
-                </span>
-                <span
-                  className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-medium border ${getComplexityColor(selectedProblem.complexity)}`}
-                >
-                  {selectedProblem.complexity}
-                </span>
+                {isCustomProblem ? (
+                  <>
+                    <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-blue-100 text-blue-800">
+                      {getCustomProblem(value)?.category}
+                    </span>
+                    <span
+                      className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-medium border ${getComplexityColor(getCustomProblem(value)?.complexity)}`}
+                    >
+                      {getCustomProblem(value)?.complexity}
+                    </span>
+                    <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-purple-100 text-purple-800">
+                      Custom
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-blue-100 text-blue-800">
+                      {selectedProblem?.theme}
+                    </span>
+                    <span
+                      className={`inline-flex items-center px-2 py-1 rounded-md text-xs font-medium border ${getComplexityColor(selectedProblem?.complexity || "")}`}
+                    >
+                      {selectedProblem?.complexity}
+                    </span>
+                  </>
+                )}
               </div>
             </div>
             <button
@@ -134,8 +252,31 @@ const ProblemStatementSelector: React.FC<ProblemStatementSelectorProps> = ({
       )}
 
       {/* Search and Filters */}
-      {!selectedProblem && (
+      {!selectedProblem && !isCustomProblem && (
         <div className="space-y-4">
+          {/* Custom Problem Statement Option */}
+          <div className="glass-effect rounded-xl border-2 border-purple-200 bg-gradient-to-r from-purple-50/50 to-indigo-50/50 p-4">
+            <div className="flex items-center justify-between mb-3">
+              <div>
+                <h4 className="text-lg font-semibold text-purple-800 flex items-center gap-2">
+                  <span className="text-2xl">✨</span>
+                  Create Your Own Problem Statement
+                </h4>
+                <p className="text-sm text-purple-600 mt-1">
+                  Have a unique idea? Define your own problem statement and work
+                  on it!
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowCustomForm(true)}
+                className="bg-purple-500 hover:bg-purple-600 text-white font-medium py-2 px-4 rounded-lg transition-colors text-sm"
+              >
+                Create Custom
+              </button>
+            </div>
+          </div>
+
           <div className="flex flex-col sm:flex-row gap-3">
             <input
               type="text"
@@ -194,7 +335,7 @@ const ProblemStatementSelector: React.FC<ProblemStatementSelectorProps> = ({
       )}
 
       {/* Problem Statements Grid */}
-      {!selectedProblem && (
+      {!selectedProblem && !isCustomProblem && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h4 className="text-sm font-semibold text-gray-700">
@@ -375,6 +516,212 @@ const ProblemStatementSelector: React.FC<ProblemStatementSelectorProps> = ({
               </p>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Custom Problem Statement Form Modal */}
+      {showCustomForm && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="glass-effect rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-white/20 shadow-2xl">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-2xl font-bold text-gradient flex items-center gap-2">
+                  <span className="text-2xl">✨</span>
+                  Create Custom Problem Statement
+                </h3>
+                <button
+                  onClick={() => setShowCustomForm(false)}
+                  className="text-gray-500 hover:text-gray-700 p-1"
+                >
+                  <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+              </div>
+
+              <div className="space-y-6">
+                {/* Title */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Problem Statement Title *
+                  </label>
+                  <input
+                    type="text"
+                    value={customProblem.title}
+                    onChange={(e) =>
+                      setCustomProblem((prev) => ({
+                        ...prev,
+                        title: e.target.value,
+                      }))
+                    }
+                    placeholder="e.g., Smart Traffic Management System"
+                    className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  />
+                </div>
+
+                {/* Description */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Problem Description *
+                  </label>
+                  <textarea
+                    value={customProblem.description}
+                    onChange={(e) =>
+                      setCustomProblem((prev) => ({
+                        ...prev,
+                        description: e.target.value,
+                      }))
+                    }
+                    placeholder="Describe the problem you want to solve, its impact, and why it matters..."
+                    rows={4}
+                    className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  />
+                </div>
+
+                {/* Category and Complexity */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Category
+                    </label>
+                    <select
+                      value={customProblem.category}
+                      onChange={(e) =>
+                        setCustomProblem((prev) => ({
+                          ...prev,
+                          category: e.target.value,
+                        }))
+                      }
+                      className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    >
+                      <option value="Software">Software</option>
+                      <option value="Hardware">Hardware</option>
+                      <option value="Student Innovation">
+                        Student Innovation
+                      </option>
+                      <option value="Smart Automation">Smart Automation</option>
+                      <option value="Miscellaneous">Miscellaneous</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Complexity
+                    </label>
+                    <select
+                      value={customProblem.complexity}
+                      onChange={(e) =>
+                        setCustomProblem((prev) => ({
+                          ...prev,
+                          complexity: e.target.value,
+                        }))
+                      }
+                      className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    >
+                      <option value="Low">Low</option>
+                      <option value="Medium">Medium</option>
+                      <option value="High">High</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Expected Outcome */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Expected Outcome
+                  </label>
+                  <textarea
+                    value={customProblem.expectedOutcome}
+                    onChange={(e) =>
+                      setCustomProblem((prev) => ({
+                        ...prev,
+                        expectedOutcome: e.target.value,
+                      }))
+                    }
+                    placeholder="What do you expect to achieve? What impact will your solution have?"
+                    rows={3}
+                    className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  />
+                </div>
+
+                {/* Tech Stack */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Technology Stack
+                  </label>
+                  <div className="flex gap-2 mb-2">
+                    <input
+                      type="text"
+                      value={techStackInput}
+                      onChange={(e) => setTechStackInput(e.target.value)}
+                      placeholder="e.g., React, Node.js, MongoDB"
+                      className="flex-1 rounded-lg border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      onKeyPress={(e) => e.key === "Enter" && handleAddTech()}
+                    />
+                    <button
+                      type="button"
+                      onClick={handleAddTech}
+                      className="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg transition-colors"
+                    >
+                      Add
+                    </button>
+                  </div>
+
+                  {/* Tech Stack Tags */}
+                  {customProblem.techStack.length > 0 && (
+                    <div className="flex flex-wrap gap-2">
+                      {customProblem.techStack.map((tech) => (
+                        <span
+                          key={tech}
+                          className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm bg-purple-100 text-purple-800"
+                        >
+                          {tech}
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveTech(tech)}
+                            className="hover:text-purple-900"
+                          >
+                            ×
+                          </button>
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex gap-3 pt-6 border-t border-gray-200">
+                  <button
+                    type="button"
+                    onClick={handleCustomSubmit}
+                    disabled={
+                      !customProblem.title || !customProblem.description
+                    }
+                    className="flex-1 bg-purple-500 hover:bg-purple-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium py-3 px-6 rounded-lg transition-colors"
+                  >
+                    Create & Select Problem Statement
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowCustomForm(false)}
+                    className="px-6 py-3 text-gray-600 hover:text-gray-800 font-medium transition-colors"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>

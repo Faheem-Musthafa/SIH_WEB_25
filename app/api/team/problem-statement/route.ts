@@ -29,9 +29,20 @@ export async function GET(request: NextRequest) {
     // Get problem statement details if selected
     let problemStatementDetails = null;
     if (team.problemStatement) {
-      problemStatementDetails = problemStatementsData.problemStatements.find(
-        (ps: any) => ps.id === team.problemStatement
-      );
+      if (team.problemStatement.startsWith("CUSTOM_")) {
+        // Handle custom problem statement
+        problemStatementDetails = {
+          id: team.problemStatement,
+          title: "Custom Problem Statement",
+          description: "Custom problem statement created by the team",
+          category: "Custom",
+          isCustom: true,
+        };
+      } else {
+        problemStatementDetails = problemStatementsData.problemStatements.find(
+          (ps: any) => ps.id === team.problemStatement
+        );
+      }
     }
 
     return NextResponse.json({
@@ -68,16 +79,27 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validate problem statement exists
-    const problemStatement = problemStatementsData.problemStatements.find(
-      (ps: any) => ps.id === problemStatementId
-    );
-
-    if (!problemStatement) {
-      return NextResponse.json(
-        { error: "Invalid problem statement ID" },
-        { status: 400 }
+    // Validate problem statement exists (or is custom)
+    let problemStatement = null;
+    if (problemStatementId.startsWith("CUSTOM_")) {
+      // Custom problem statement - no need to validate against predefined list
+      problemStatement = {
+        id: problemStatementId,
+        title: "Custom Problem Statement",
+        category: "Custom",
+        isCustom: true,
+      };
+    } else {
+      problemStatement = problemStatementsData.problemStatements.find(
+        (ps: any) => ps.id === problemStatementId
       );
+
+      if (!problemStatement) {
+        return NextResponse.json(
+          { error: "Invalid problem statement ID" },
+          { status: 400 }
+        );
+      }
     }
 
     await connectMongoose();
